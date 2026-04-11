@@ -883,7 +883,7 @@
             background: white;
             border-radius: 20px;
             padding: 24px;
-            max-width: 360px;
+            max-width: 480px;
             width: 100%;
             animation: scaleIn 0.3s ease;
         }
@@ -903,11 +903,14 @@
             margin-bottom: 16px;
             display: flex;
             justify-content: center;
+            overflow: hidden;
         }
 
         #shareCanvas {
             border-radius: 8px;
             max-width: 100%;
+            height: auto;
+            display: block;
         }
 
         .share-modal-tip {
@@ -1166,7 +1169,7 @@
         <div class="share-modal-content">
             <div class="share-modal-title">📱 保存分享图片</div>
             <div class="share-canvas-container">
-                <canvas id="shareCanvas" width="300" height="400"></canvas>
+                <canvas id="shareCanvas" width="900" height="1200"></canvas>
             </div>
             <p class="share-modal-tip">长按图片保存，或截图分享到社交媒体</p>
             <button class="share-modal-close" onclick="hideShareModal()">关闭</button>
@@ -1973,6 +1976,7 @@
         function generateShareImage() {
             const canvas = document.getElementById('shareCanvas');
             const ctx = canvas.getContext('2d');
+            const dpr = 3; // 3x resolution
             const mbtiType = document.getElementById('report-type').textContent;
             const typeData = personalityTypes[mbtiType];
 
@@ -1989,37 +1993,37 @@
             // Decorative circles
             ctx.globalAlpha = 0.1;
             ctx.beginPath();
-            ctx.arc(50, 50, 100, 0, Math.PI * 2);
+            ctx.arc(150, 150, 300, 0, Math.PI * 2);
             ctx.fill();
             ctx.beginPath();
-            ctx.arc(280, 350, 80, 0, Math.PI * 2);
+            ctx.arc(800, 1000, 250, 0, Math.PI * 2);
             ctx.fill();
             ctx.globalAlpha = 1;
 
             // Badge
             ctx.fillStyle = 'rgba(255,255,255,0.2)';
             ctx.beginPath();
-            ctx.roundRect(90, 40, 120, 28, 14);
+            ctx.roundRect(270, 120, 360, 84, 42);
             ctx.fill();
             ctx.fillStyle = 'white';
-            ctx.font = '12px "Noto Sans SC", sans-serif';
+            ctx.font = '36px "Noto Sans SC", sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('MBTI 性格测试', 150, 58);
+            ctx.fillText('MBTI 性格测试', 450, 174);
 
             // Type letter
             ctx.fillStyle = 'white';
-            ctx.font = 'bold 72px "Noto Sans SC", sans-serif';
+            ctx.font = 'bold 216px "Noto Sans SC", sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText(mbtiType, 150, 160);
+            ctx.fillText(mbtiType, 450, 480);
 
             // Name
-            ctx.font = '28px "Noto Sans SC", sans-serif';
-            ctx.fillText(typeData.name, 150, 205);
+            ctx.font = '84px "Noto Sans SC", sans-serif';
+            ctx.fillText(typeData.name, 450, 615);
 
             // Slogan
-            ctx.font = '14px "Noto Sans SC", sans-serif';
+            ctx.font = '42px "Noto Sans SC", sans-serif';
             ctx.globalAlpha = 0.9;
-            ctx.fillText(typeData.slogan, 150, 240);
+            ctx.fillText(typeData.slogan, 450, 720);
             ctx.globalAlpha = 1;
 
             // Dimension tags
@@ -2030,40 +2034,40 @@
 
             const tags = [dimE, dimS, dimT, dimJ];
             const tagColors = ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
-            let tagX = 30;
+            let tagX = 90;
             tags.forEach((tag, i) => {
-                const tagWidth = ctx.measureText(tag).width + 24;
+                ctx.font = '36px "Noto Sans SC", sans-serif';
+                const tagWidth = ctx.measureText(tag).width + 72;
                 ctx.fillStyle = tagColors[i];
                 ctx.beginPath();
-                ctx.roundRect(tagX, 275, tagWidth, 26, 13);
+                ctx.roundRect(tagX, 825, tagWidth, 78, 39);
                 ctx.fill();
                 ctx.fillStyle = 'white';
-                ctx.font = '12px "Noto Sans SC", sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(tag, tagX + tagWidth / 2, 292);
-                tagX += tagWidth + 8;
+                ctx.fillText(tag, tagX + tagWidth / 2, 876);
+                tagX += tagWidth + 24;
             });
 
             // Personality tags
             const tags2 = typeData.tags.slice(0, 3);
-            let tag2X = 30;
+            let tag2X = 90;
             tags2.forEach((tag) => {
-                const tagWidth = ctx.measureText('#' + tag).width + 20;
+                ctx.font = '33px "Noto Sans SC", sans-serif';
+                const tagWidth = ctx.measureText('#' + tag).width + 60;
                 ctx.fillStyle = 'rgba(255,255,255,0.2)';
                 ctx.beginPath();
-                ctx.roundRect(tag2X, 320, tagWidth, 24, 12);
+                ctx.roundRect(tag2X, 960, tagWidth, 72, 36);
                 ctx.fill();
                 ctx.fillStyle = 'white';
-                ctx.font = '11px "Noto Sans SC", sans-serif';
-                ctx.fillText('#' + tag, tag2X + tagWidth / 2, 335);
-                tag2X += tagWidth + 8;
+                ctx.fillText('#' + tag, tag2X + tagWidth / 2, 1005);
+                tag2X += tagWidth + 24;
             });
 
             // Footer
             ctx.fillStyle = 'rgba(255,255,255,0.6)';
-            ctx.font = '11px "Noto Sans SC", sans-serif';
+            ctx.font = '33px "Noto Sans SC", sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('长按保存图片 · 分享到社交媒体', 150, 380);
+            ctx.fillText('长按保存图片 · 分享到社交媒体', 450, 1140);
         }
 
         function shareReport() {
