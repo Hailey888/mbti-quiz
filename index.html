@@ -1,0 +1,2096 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MBTI 性格测试 | 发现你的真实人格</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --bg-start: #f8fafc;
+            --bg-end: #e0e7ff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-light: #94a3b8;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 4px 24px rgba(99, 102, 241, 0.1);
+            --shadow-lg: 0 8px 40px rgba(99, 102, 241, 0.15);
+            
+            /* Dimension colors */
+            --ei-color: #f59e0b;
+            --sn-color: #10b981;
+            --tf-color: #3b82f6;
+            --jp-color: #8b5cf6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Screen transitions */
+        .screen {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes drawRadar {
+            from { stroke-dashoffset: 1000; }
+            to { stroke-dashoffset: 0; }
+        }
+
+        /* Start Screen */
+        .start-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .logo-area {
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow: var(--shadow-lg);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .logo-icon svg {
+            width: 50px;
+            height: 50px;
+            fill: white;
+        }
+
+        .start-screen h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .start-screen .subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .start-info {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow);
+            width: 100%;
+        }
+
+        .start-info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        .start-info-item:last-child {
+            border-bottom: none;
+        }
+
+        .start-info-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .start-info-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .start-info-text {
+            text-align: left;
+        }
+
+        .start-info-text strong {
+            display: block;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .start-info-text span {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            font-family: inherit;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Question Screen */
+        .question-screen {
+            padding: 20px 0;
+        }
+
+        .progress-area {
+            margin-bottom: 20px;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .progress-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .progress-count {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 32px 24px;
+            box-shadow: var(--shadow);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-dimension {
+            font-size: 12px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .option {
+            padding: 16px 20px;
+            background: white;
+            border: 2px solid rgba(99, 102, 241, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option:hover {
+            border-color: var(--primary-light);
+            background: rgba(99, 102, 241, 0.03);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+        .option-indicator {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid rgba(99, 102, 241, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .option.selected .option-indicator {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .option.selected .option-indicator::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .option-text {
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .loading-animation {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 32px;
+            position: relative;
+        }
+
+        .loading-circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: var(--primary);
+            animation: spin 1.2s linear infinite;
+        }
+
+        .loading-circle:nth-child(2) {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            border-top-color: var(--primary-light);
+            animation-delay: 0.15s;
+            animation-direction: reverse;
+        }
+
+        .loading-circle:nth-child(3) {
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            border-top-color: var(--primary-dark);
+            animation-delay: 0.3s;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 16px;
+            color: var(--text-secondary);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* Payment Screen */
+        .payment-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .payment-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px 24px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 360px;
+        }
+
+        .payment-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        .payment-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        .payment-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .payment-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .payment-price {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 24px;
+        }
+
+        .payment-price span {
+            font-size: 18px;
+            font-weight: 400;
+        }
+
+        .payment-features {
+            text-align: left;
+            margin-bottom: 32px;
+        }
+
+        .payment-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .payment-feature svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .btn-pay {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #07c160 0%, #10b981 100%);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            margin-bottom: 16px;
+        }
+
+        .btn-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(7, 193, 96, 0.3);
+        }
+
+        .payment-note {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* ==================== */
+        /* REPORT SCREEN - NEW  */
+        /* ==================== */
+        
+        .report-screen {
+            padding: 0 0 40px 0;
+        }
+
+        /* Report Hero Section */
+        .report-hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 40px 24px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .report-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .report-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .report-type-large {
+            font-size: 64px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            animation: scaleIn 0.6s ease-out;
+        }
+
+        .report-name-large {
+            font-size: 28px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.95);
+            margin-bottom: 16px;
+            animation: slideUp 0.6s ease-out 0.1s both;
+        }
+
+        .report-slogan {
+            font-size: 15px;
+            color: rgba(255,255,255,0.85);
+            font-style: italic;
+            animation: slideUp 0.6s ease-out 0.2s both;
+        }
+
+        /* Dimension Tags */
+        .dimension-tags {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+            animation: slideUp 0.6s ease-out 0.3s both;
+        }
+
+        .dimension-tag {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dimension-tag.ei { background: var(--ei-color); }
+        .dimension-tag.sn { background: var(--sn-color); }
+        .dimension-tag.tf { background: var(--tf-color); }
+        .dimension-tag.jp { background: var(--jp-color); }
+
+        /* Personality Icon */
+        .personality-icon {
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: -50px auto 24px;
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.3);
+            animation: scaleIn 0.6s ease-out 0.4s both;
+        }
+
+        .personality-icon .icon-emoji {
+            font-size: 48px;
+        }
+
+        /* Radar Chart Section */
+        .radar-section {
+            padding: 0 20px;
+            margin-bottom: 20px;
+            animation: slideUp 0.6s ease-out 0.5s both;
+        }
+
+        .radar-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .radar-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .radar-chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .radar-chart {
+            width: 220px;
+            height: 220px;
+        }
+
+        /* Score Labels */
+        .score-labels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .score-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            background: rgba(99, 102, 241, 0.05);
+            border-radius: 12px;
+        }
+
+        .score-label .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .score-label .label-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .score-label .label-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-left: auto;
+        }
+
+        /* Report Content Cards */
+        .report-content {
+            padding: 0 20px;
+        }
+
+        /* Tags Card */
+        .tags-card {
+            animation: slideUp 0.6s ease-out 0.6s both;
+        }
+
+        .personality-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .personality-tag {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Section Card */
+        .section-card {
+            animation: slideUp 0.6s ease-out 0.7s both;
+        }
+
+        .section-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+
+        .section-icon.blue { background: rgba(59, 130, 246, 0.1); }
+        .section-icon.green { background: rgba(16, 185, 129, 0.1); }
+        .section-icon.purple { background: rgba(139, 92, 246, 0.1); }
+        .section-icon.orange { background: rgba(245, 158, 11, 0.1); }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .section-quote {
+            background: rgba(99, 102, 241, 0.05);
+            border-left: 3px solid var(--primary);
+            padding: 16px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 20px;
+        }
+
+        .section-quote p {
+            font-size: 14px;
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-style: italic;
+        }
+
+        .section-list {
+            list-style: none;
+        }
+
+        .section-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.08);
+        }
+
+        .section-list li:last-child {
+            border-bottom: none;
+        }
+
+        .section-list .list-bullet {
+            width: 22px;
+            height: 22px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 11px;
+            color: white;
+        }
+
+        .section-list .list-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Share Card */
+        .share-card {
+            text-align: center;
+            animation: slideUp 0.6s ease-out 0.8s both;
+        }
+
+        .share-preview {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .share-preview-type {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .share-preview-name {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+        }
+
+        .share-preview-slogan {
+            font-size: 13px;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        .btn-share {
+            width: 100%;
+            padding: 14px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .btn-share:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-share svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+        }
+
+        .btn-retest {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            padding: 10px 20px;
+        }
+
+        .btn-retest:hover {
+            color: var(--text-secondary);
+        }
+
+        /* Share Modal */
+        .share-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .share-modal.active {
+            display: flex;
+        }
+
+        .share-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            max-width: 360px;
+            width: 100%;
+            animation: scaleIn 0.3s ease;
+        }
+
+        .share-modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .share-canvas-container {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #shareCanvas {
+            border-radius: 8px;
+            max-width: 100%;
+        }
+
+        .share-modal-tip {
+            font-size: 13px;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .share-modal-close {
+            width: 100%;
+            padding: 12px;
+            margin-top: 16px;
+            background: var(--card-bg);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .share-modal-close:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        /* Color themes for personality types */
+        .type-architect { --type-color: #5429a5; }
+        .type-logician { --type-color: #0891b2; }
+        .type-commander { --type-color: #c026d3; }
+        .type-debater { --type-color: #ea580c; }
+        .type-advocate { --type-color: #16a34a; }
+        .type-mediator { --type-color: #0d9488; }
+        .type-protagonist { --type-color: #dc2626; }
+        .type-campaigner { --type-color: #ca8a04; }
+        .type-logistician { --type-color: #1e40af; }
+        .type-defender { --type-color: #7c3aed; }
+        .type-executive { --type-color: #b45309; }
+        .type-consul { --type-color: #be185d; }
+        .type-virtuoso { --type-color: #475569; }
+        .type-adventurer { --type-color: #0f766e; }
+        .type-entrepreneur { --type-color: #ea580c; }
+        .type-entertainer { --type-color: #db2777; }
+
+        /* Utility */
+        .mb-12 { margin-bottom: 12px; }
+        .mb-16 { margin-bottom: 16px; }
+        .mb-20 { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen start-screen active">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                </div>
+                <h1>MBTI 性格测试</h1>
+                <p class="subtitle">发现你的真实人格类型</p>
+            </div>
+
+            <div class="start-info">
+                <div class="start-info-item">
+                    <div class="start-info-icon">
+                        <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    </div>
+                    <div class="start-info-text">
+                        <strong>约 10 分钟</strong>
+                        <span>28道精心设计的选择题</span>
+                    </div>
+                </div>
+                <div class="start-info-item">
+                    <div class="start-info-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <div class="start-info-text">
+                        <strong>16种人格类型</strong>
+                        <span>深度解析你的性格特点</span>
+                    </div>
+                </div>
+                <div class="start-info-item">
+                    <div class="start-info-icon">
+                        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                    </div>
+                    <div class="start-info-text">
+                        <strong>社交货币</strong>
+                        <span>了解自己，也理解他人</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="startTest()">开始测试</button>
+        </div>
+
+        <!-- Question Screen -->
+        <div id="question-screen" class="screen question-screen">
+            <div class="progress-area">
+                <div class="progress-text">
+                    <span class="progress-label">答题进度</span>
+                    <span class="progress-count"><span id="current-q">1</span> / <span id="total-q">28</span></span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 3.6%"></div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-dimension" id="dimension-label">维度一：外向(E) - 内向(I)</div>
+                <div class="question-text" id="question-text">题目加载中...</div>
+
+                <div class="options" id="options-container">
+                    <!-- Options will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Screen -->
+        <div id="payment-screen" class="screen payment-screen">
+            <div class="payment-card">
+                <div class="payment-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                </div>
+                <h2 class="payment-title">解锁完整报告</h2>
+                <p class="payment-desc">付款后即可查看你的专属MBTI性格分析报告</p>
+                <div class="payment-price">¥9.9<span>9</span></div>
+
+                <div class="payment-features">
+                    <div class="payment-feature">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        完整的性格类型分析
+                    </div>
+                    <div class="payment-feature">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        优势与劣势深度解读
+                    </div>
+                    <div class="payment-feature">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        人际关系与情感分析
+                    </div>
+                    <div class="payment-feature">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        职业发展建议
+                    </div>
+                    <div class="payment-feature">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        永久保存，可分享
+                    </div>
+                </div>
+
+                <button class="btn-pay" onclick="simulatePayment()">微信支付 ¥9.99</button>
+                <p class="payment-note">点击上方按钮完成付款（演示模式）</p>
+            </div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loading-screen" class="screen loading-screen">
+            <div class="loading-animation">
+                <div class="loading-circle"></div>
+                <div class="loading-circle"></div>
+                <div class="loading-circle"></div>
+            </div>
+            <p class="loading-text">正在分析你的性格...</p>
+        </div>
+
+        <!-- Report Screen - NEW DESIGN -->
+        <div id="report-screen" class="screen report-screen">
+            <!-- Hero Section -->
+            <div class="report-hero">
+                <div class="report-badge">你的MBTI性格类型</div>
+                <div class="report-type-large" id="report-type">INTJ</div>
+                <div class="report-name-large" id="report-name">建筑师</div>
+                <div class="report-slogan" id="report-slogan">"战略思维者，理性的梦想家"</div>
+                
+                <div class="dimension-tags" id="dimension-tags">
+                    <!-- Dimension tags will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Personality Icon -->
+            <div class="personality-icon">
+                <span class="icon-emoji" id="personality-icon">🏛️</span>
+            </div>
+
+            <!-- Radar Chart Section -->
+            <div class="radar-section">
+                <div class="radar-card">
+                    <div class="radar-title">性格四维度分析</div>
+                    <div class="radar-chart-container">
+                        <canvas id="radarChart" class="radar-chart" width="220" height="220"></canvas>
+                    </div>
+                    <div class="score-labels" id="score-labels">
+                        <!-- Score labels will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Content -->
+            <div class="report-content">
+                <!-- Personality Tags -->
+                <div class="report-card tags-card">
+                    <div class="section-title">🏷️ 人格标签</div>
+                    <div class="personality-tags" id="personality-tags">
+                        <!-- Tags will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Core Traits -->
+                <div class="report-card section-card">
+                    <div class="section-icon blue">💡</div>
+                    <div class="section-title">性格解析</div>
+                    <div class="section-quote">
+                        <p id="report-intro">你是一个理性而独立的思想者，拥有战略性的思维和坚定的内心。</p>
+                    </div>
+                    <ul class="section-list" id="report-traits">
+                        <!-- Traits will be inserted here -->
+                    </ul>
+                </div>
+
+                <!-- Career -->
+                <div class="report-card section-card">
+                    <div class="section-icon green">💼</div>
+                    <div class="section-title">职业发展</div>
+                    <ul class="section-list" id="report-career">
+                        <!-- Career suggestions will be inserted here -->
+                    </ul>
+                </div>
+
+                <!-- Relationships -->
+                <div class="report-card section-card">
+                    <div class="section-icon purple">💕</div>
+                    <div class="section-title">人际关系</div>
+                    <ul class="section-list" id="report-relationships">
+                        <!-- Relationships will be inserted here -->
+                    </ul>
+                </div>
+
+                <!-- Share Section -->
+                <div class="report-card share-card">
+                    <div class="share-preview" id="share-preview">
+                        <div class="share-preview-type" id="share-type">INTJ</div>
+                        <div class="share-preview-name" id="share-name">建筑师</div>
+                        <div class="share-preview-slogan" id="share-slogan">"战略思维者，理性的梦想家"</div>
+                    </div>
+                    <button class="btn-share" onclick="showShareModal()">
+                        <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+                        生成分享图片
+                    </button>
+                    <button class="btn-retest" onclick="retest()">🔄 重新测试</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="share-modal" id="shareModal">
+        <div class="share-modal-content">
+            <div class="share-modal-title">📱 保存分享图片</div>
+            <div class="share-canvas-container">
+                <canvas id="shareCanvas" width="300" height="400"></canvas>
+            </div>
+            <p class="share-modal-tip">长按图片保存，或截图分享到社交媒体</p>
+            <button class="share-modal-close" onclick="hideShareModal()">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        // Questions data
+        const questions = [
+            // Dimension 1: EI (7 questions)
+            {
+                dimension: "外向(E) - 内向(I)",
+                dimensionKey: "EI",
+                question: "在社交聚会上，你通常会：",
+                options: [
+                    { text: "主动和陌生人聊天", value: "E" },
+                    { text: "只和认识的人交流", value: "I" }
+                ]
+            },
+            {
+                dimension: "外向(E) - 内向(I)",
+                dimensionKey: "EI",
+                question: "当你有一个新想法时，你通常会：",
+                options: [
+                    { text: "立即和别人分享讨论", value: "E" },
+                    { text: "先自己思考成熟再说", value: "I" }
+                ]
+            },
+            {
+                dimension: "外向(E) - 内向(I)",
+                dimensionKey: "EI",
+                question: "在人群中，你更容易：",
+                options: [
+                    { text: "成为谈话的发起者", value: "E" },
+                    { text: "倾向于倾听多于发言", value: "I" }
+                ]
+            },
+            {
+                dimension: "外向(E) - 内向(I)",
+                dimensionKey: "EI",
+                question: "你获得能量的方式是：",
+                options: [
+                    { text: "和他人互动交流", value: "E" },
+                    { text: "通过独处和内省", value: "I" }
+                ]
+            },
+            {
+                dimension: "外向(E) - 内向(I)",
+                dimensionKey: "EI",
+                question: "你更喜欢的工作环境是：",
+                options: [
+                    { text: "开放、协作的办公室", value: "E" },
+                    { text: "安静、独立的工作空间", value: "I" }
+                ]
+            },
+            {
+                dimension: "外向(E) - 内向(I)",
+                dimensionKey: "EI",
+                question: "周末你更想：",
+                options: [
+                    { text: "约朋友一起出去玩", value: "E" },
+                    { text: "在家安静地休息或读书", value: "I" }
+                ]
+            },
+            {
+                dimension: "外向(E) - 内向(I)",
+                dimensionKey: "EI",
+                question: "当需要做决定时，你倾向于：",
+                options: [
+                    { text: "和他人商量后决定", value: "E" },
+                    { text: "自己想清楚再决定", value: "I" }
+                ]
+            },
+
+            // Dimension 2: SN (7 questions)
+            {
+                dimension: "直觉(N) - 感觉(S)",
+                dimensionKey: "SN",
+                question: "你更关注：",
+                options: [
+                    { text: "未来的可能性和想象", value: "N" },
+                    { text: "当下的现实和具体细节", value: "S" }
+                ]
+            },
+            {
+                dimension: "直觉(N) - 感觉(S)",
+                dimensionKey: "SN",
+                question: "你更容易被什么吸引？",
+                options: [
+                    { text: "新颖、抽象的概念和理论", value: "N" },
+                    { text: "具体、实用的事实和数据", value: "S" }
+                ]
+            },
+            {
+                dimension: "直觉(N) - 感觉(S)",
+                dimensionKey: "SN",
+                question: "当你学习新东西时，你喜欢：",
+                options: [
+                    { text: "先了解整体概念和原理", value: "N" },
+                    { text: "通过具体例子和实践来学习", value: "S" }
+                ]
+            },
+            {
+                dimension: "直觉(N) - 感觉(S)",
+                dimensionKey: "SN",
+                question: "你更相信：",
+                options: [
+                    { text: "自己的直觉和第六感", value: "N" },
+                    { text: "亲眼所见的事实", value: "S" }
+                ]
+            },
+            {
+                dimension: "直觉(N) - 感觉(S)",
+                dimensionKey: "SN",
+                question: "描述一件事时，你倾向于：",
+                options: [
+                    { text: "使用比喻和象征", value: "N" },
+                    { text: "描述具体的事实和细节", value: "S" }
+                ]
+            },
+            {
+                dimension: "直觉(N) - 感觉(S)",
+                dimensionKey: "SN",
+                question: "你更喜欢的工作内容是：",
+                options: [
+                    { text: "创新和解决复杂问题", value: "N" },
+                    { text: "执行明确的任务流程", value: "S" }
+                ]
+            },
+            {
+                dimension: "直觉(N) - 感觉(S)",
+                dimensionKey: "SN",
+                question: "面对变化时，你通常会：",
+                options: [
+                    { text: "兴奋地期待新的可能", value: "N" },
+                    { text: "谨慎地评估潜在风险", value: "S" }
+                ]
+            },
+
+            // Dimension 3: TF (7 questions)
+            {
+                dimension: "思考(T) - 情感(F)",
+                dimensionKey: "TF",
+                question: "做决定时，你更看重：",
+                options: [
+                    { text: "逻辑和客观分析", value: "T" },
+                    { text: "对他人的影响和感受", value: "F" }
+                ]
+            },
+            {
+                dimension: "思考(T) - 情感(F)",
+                dimensionKey: "TF",
+                question: "当你不同意别人的观点时，你会：",
+                options: [
+                    { text: "直接指出逻辑上的问题", value: "T" },
+                    { text: "考虑对方的感受，委婉表达", value: "F" }
+                ]
+            },
+            {
+                dimension: "思考(T) - 情感(F)",
+                dimensionKey: "TF",
+                question: "你觉得批判性思维最重要的是：",
+                options: [
+                    { text: "客观分析和逻辑推理", value: "T" },
+                    { text: "理解和支持他人", value: "F" }
+                ]
+            },
+            {
+                dimension: "思考(T) - 情感(F)",
+                dimensionKey: "TF",
+                question: "在争论中，你更倾向于：",
+                options: [
+                    { text: "用逻辑说服对方", value: "T" },
+                    { text: "试图理解对方的感受", value: "F" }
+                ]
+            },
+            {
+                dimension: "思考(T) - 情感(F)",
+                dimensionKey: "TF",
+                question: "你更愿意被称赞：",
+                options: [
+                    { text: "能力和智慧", value: "T" },
+                    { text: "善良和体贴", value: "F" }
+                ]
+            },
+            {
+                dimension: "思考(T) - 情感(F)",
+                dimensionKey: "TF",
+                question: "当你给别人建议时，你更关注：",
+                options: [
+                    { text: "解决方案是否有效", value: "T" },
+                    { text: "对方现在的情绪状态", value: "F" }
+                ]
+            },
+            {
+                dimension: "思考(T) - 情感(F)",
+                dimensionKey: "TF",
+                question: "你认为自己更：",
+                options: [
+                    { text: "理性冷静", value: "T" },
+                    { text: "重感情善解人意", value: "F" }
+                ]
+            },
+
+            // Dimension 4: JP (7 questions)
+            {
+                dimension: "判断(J) - 知觉(P)",
+                dimensionKey: "JP",
+                question: "你更喜欢：",
+                options: [
+                    { text: "有计划、有条理的生活", value: "J" },
+                    { text: "随性、灵活的生活方式", value: "P" }
+                ]
+            },
+            {
+                dimension: "判断(J) - 知觉(P)",
+                dimensionKey: "JP",
+                question: "当你做计划时，你通常会：",
+                options: [
+                    { text: "提前制定详细的计划", value: "J" },
+                    { text: "边做边看，灵活调整", value: "P" }
+                ]
+            },
+            {
+                dimension: "判断(J) - 知觉(P)",
+                dimensionKey: "JP",
+                question: "你更容易感到：",
+                options: [
+                    { text: "事情太多，时间不够", value: "J" },
+                    { text: "有趣的事情太多做不完", value: "P" }
+                ]
+            },
+            {
+                dimension: "判断(J) - 知觉(P)",
+                dimensionKey: "JP",
+                question: "在工作中，你更喜欢：",
+                options: [
+                    { text: "按部就班完成任务", value: "J" },
+                    { text: "有变化和新鲜感", value: "P" }
+                ]
+            },
+            {
+                dimension: "判断(J) - 知觉(P)",
+                dimensionKey: "JP",
+                question: "别人对你的第一印象可能是：",
+                options: [
+                    { text: "可靠、有组织", value: "J" },
+                    { text: "随和、有趣", value: "P" }
+                ]
+            },
+            {
+                dimension: "判断(J) - 知觉(P)",
+                dimensionKey: "JP",
+                question: "你更倾向于：",
+                options: [
+                    { text: "说到做到，有始有终", value: "J" },
+                    { text: "保持开放，接受变化", value: "P" }
+                ]
+            },
+            {
+                dimension: "判断(J) - 知觉(P)",
+                dimensionKey: "JP",
+                question: "面对最后期限时，你通常会：",
+                options: [
+                    { text: "提前完成，避免压力", value: "J" },
+                    { text: "在压力下效率更高", value: "P" }
+                ]
+            }
+        ];
+
+        // Personality type data with enhanced info
+        const personalityTypes = {
+            "INTJ": {
+                name: "建筑师",
+                category: "分析师",
+                slogan: "战略思维者，理性的梦想家",
+                intro: "你是一个理性而独立的思想者，拥有战略性的思维和坚定的内心。你善于制定长期计划，追求知识和理解是你的核心动力。",
+                traits: ["战略思维能力强，善于规划", "独立自主，不依赖他人", "追求知识和持续成长", "逻辑清晰，善于分析", "对自己的标准很高"],
+                career: ["适合需要战略眼光和独立思考的工作", "科学家、工程师、律师、医生", "喜欢能发挥专业能力的环境", "需要空间和时间来思考"],
+                relationships: ["倾向于和少数深入的人建立深厚友谊", "需要独处时间来充电", "表达感情含蓄但忠诚", "欣赏能够独立思考的伴侣"],
+                tags: ["战略家", "独立思考", "完美主义", "理性", "高标准"],
+                icon: "🏛️",
+                color: "#5429a5"
+            },
+            "INTP": {
+                name: "逻辑学家",
+                category: "分析师",
+                slogan: "思想的建筑师，逻辑的诗人",
+                intro: "你是一个充满好奇心和求知欲的思考者。你热爱探索知识的边界，追求理解和真理是你人生的核心动力。",
+                traits: ["极具好奇心和求知欲", "逻辑思维能力强", "善于发现patterns和联系", "独立思考，不盲从", "对抽象概念充满兴趣"],
+                career: ["适合研究、分析类工作", "哲学家、物理学家、数学家", "程序员、数据分析师、研究员", "需要智识刺激和自由环境"],
+                relationships: ["重视智力交流和思想碰撞", "有时会显得疏离但内心温暖", "需要理解和支持他们的思考时间", "选择一个能够对话的伴侣"],
+                tags: ["思想家", "逻辑强", "好奇心", "独立", "抽象思维"],
+                icon: "🔬",
+                color: "#0891b2"
+            },
+            "ENTJ": {
+                name: "指挥官",
+                category: "分析师",
+                slogan: "天生的领袖，果断的决策者",
+                intro: "你是一个天生的领导者，拥有非凡的洞察力和决策能力。你敢于挑战现状，追求卓越和成功是你的人生信条。",
+                traits: ["天生的领导者气质", "决策果断，善于组织", "自信且有影响力", "善于发现问题和机会", "追求效率和成果"],
+                career: ["适合管理和领导岗位", "企业家、高管、律师、法官", "适合快节奏、高压环境", "喜欢能够掌控和改变的环境"],
+                relationships: ["直接坦率，有时显得强势", "重视伴侣的能力和独立性", "愿意为关系投入时间和精力", "欣赏能够跟上节奏的伴侣"],
+                tags: ["领导者", "果断", "自信", "高效", "有影响力"],
+                icon: "🎯",
+                color: "#c026d3"
+            },
+            "ENTP": {
+                name: "辩论家",
+                category: "分析师",
+                slogan: "创意的火花，可能性追寻者",
+                intro: "你是一个充满活力和创意的思想家，喜欢挑战常规，探索可能性。你善于发现问题并提出创新的解决方案。",
+                traits: ["思维敏捷，善于创新", "喜欢挑战和辩论", "多才多艺，兴趣广泛", "善于激励他人", "适应能力强"],
+                career: ["适合创意和创业类工作", "律师、记者、演员、顾问", "喜欢解决问题的过程", "需要自由和变化的环境"],
+                relationships: ["善于社交，有魅力", "喜欢智识上的刺激", "需要保持新鲜感", "欣赏能够一起探索的伴侣"],
+                tags: ["创新者", "多才多艺", "善于交际", "思维敏捷", "喜欢挑战"],
+                icon: "💡",
+                color: "#ea580c"
+            },
+            "INFJ": {
+                name: "提倡者",
+                category: "外交官",
+                slogan: "理想主义的灯塔，温暖的光芒",
+                intro: "你是一个理想主义者，拥有深刻的同理心和强烈的价值观。你致力于帮助他人，同时追求人生的意义和价值。",
+                traits: ["理想主义，追求意义", "极具同理心和洞察力", "有原则，有价值观", "善于倾听和理解他人", "有感染力的理想主义者"],
+                career: ["适合帮助他人实现价值的工作", "心理咨询师、社会工作者", "作家、艺术家、教师", "需要能够体现价值观的环境"],
+                relationships: ["重视深度连接和质量", "善于理解他人需求", "有时过度在意他人看法", "寻找能够理解自己的伴侣"],
+                tags: ["理想主义者", "同理心强", "有原则", "善于倾听", "富有洞察力"],
+                icon: "🕯️",
+                color: "#16a34a"
+            },
+            "INFP": {
+                name: "调停者",
+                category: "外交官",
+                slogan: "浪漫的理想主义者，灵魂的诗人",
+                intro: "你是一个浪漫的理想主义者，拥有丰富的内心世界和对美的追求。你善良、真诚，致力于寻找人生的意义和价值。",
+                traits: ["理想主义，相信善良", "富有想象力和创造力", "真诚，忠于自我", "善于理解他人", "有强烈的个人价值观"],
+                career: ["适合创作和帮助他人的工作", "作家、设计师、心理咨询师", "社会工作者、图书馆员", "需要自由和意义的环境"],
+                relationships: ["重视灵魂契合", "需要空间保持自我", "表达含蓄但内心炽热", "寻找能够共同成长的伴侣"],
+                tags: ["梦想家", "富有想象力", "善良", "真诚", "有创造力"],
+                icon: "🎨",
+                color: "#0d9488"
+            },
+            "ENFJ": {
+                name: "主人公",
+                category: "外交官",
+                slogan: "魅力的激励者，团队的灯塔",
+                intro: "你是一个充满魅力的领导者，天生具有激励他人的能力。你热情、有感染力，致力于帮助他人成为最好的自己。",
+                traits: ["天生的领导者和激励者", "富有同理心和感染力", "热情、乐观、有魅力", "善于沟通和协调", "追求双赢和和谐"],
+                career: ["适合领导和培养他人的工作", "教师、教练、企业家、HR", "适合需要人际互动的环境", "喜欢看到他人成长和成功"],
+                relationships: ["重视关系，付出型人格", "善于调和矛盾", "有时过于在意他人看法", "寻找能够支持的伴侣"],
+                tags: ["激励者", "有魅力", "富有同理心", "善于沟通", "理想主义者"],
+                icon: "⭐",
+                color: "#dc2626"
+            },
+            "ENFP": {
+                name: "竞选者",
+                category: "外交官",
+                slogan: "热情的探险家，无限的可能",
+                intro: "你是一个充满热情和创意的探险家，拥有无限的可能性。你自由、热情，总是在寻找新的体验和可能性。",
+                traits: ["热情、有感染力", "充满创意和可能性", "适应力强，灵活", "善于激励他人", "对世界充满好奇"],
+                career: ["适合创意和启发他人的工作", "记者、演员、设计师、营销", "适合充满变化的环境", "需要自由和创造的空间"],
+                relationships: ["热情浪漫，重视新鲜感", "善于社交，有吸引力", "需要保持一定的自由", "寻找能够一起冒险的伴侣"],
+                tags: ["探险家", "热情", "有创意", "善于社交", "自由灵魂"],
+                icon: "🎪",
+                color: "#ca8a04"
+            },
+            "ISTJ": {
+                name: "物流师",
+                category: "守护者",
+                slogan: "责任的守护者，稳定的基石",
+                intro: "你是一个可靠、务实的实践者，重视责任和承诺。你勤奋、细心，通过坚持不懈的努力来达成目标。",
+                traits: ["可靠、值得信赖", "务实、注重实际", "有责任心", "注重细节和秩序", "勤奋努力"],
+                career: ["适合需要责任感和稳定性的工作", "会计、审计、医生、法官", "适合按部就班的环境", "喜欢可预测的结果"],
+                relationships: ["忠诚、专一", "表达含蓄但行动证明", "重视传统和责任", "寻找稳定可靠的关系"],
+                tags: ["可靠", "务实", "有责任心", "注重细节", "传统"],
+                icon: "🛡️",
+                color: "#1e40af"
+            },
+            "ISFJ": {
+                name: "守卫者",
+                category: "守护者",
+                slogan: "温暖的守护者，无声的关怀",
+                intro: "你是一个温暖、体贴的守护者，默默关心着身边的人。你善良、勤奋，致力于维护传统和和谐。",
+                traits: ["温暖、体贴、关怀他人", "有责任心和奉献精神", "注重细节和实际", "谦虚、不愿出风头", "善于记忆细节"],
+                career: ["适合需要关怀和稳定性的工作", "护士、教师、行政管理", "喜欢支持和帮助他人", "需要被认可和欣赏的环境"],
+                relationships: ["倾注型人格，付出很多", "需要时间建立信任", "重视家庭和传统", "寻找能够欣赏自己的伴侣"],
+                tags: ["守护者", "体贴", "有责任心", "忠诚", "谦逊"],
+                icon: "🌸",
+                color: "#7c3aed"
+            },
+            "ESTJ": {
+                name: "总经理",
+                category: "守护者",
+                slogan: "果断的组织者，效率的追求者",
+                intro: "你是一个果断、有组织的领导者，注重效率和成果。你重视传统、规则和秩序，是天生的管理者。",
+                traits: ["有组织和领导能力", "注重效率和成果", "直接、坦率", "重视传统和规则", "有责任心"],
+                career: ["适合管理和组织工作", "企业高管、军官、法官", "适合需要做决策的环境", "喜欢控制和秩序"],
+                relationships: ["直接、坦率有时显得强势", "重视责任和承诺", "传统、重视家庭", "欣赏能够独立但支持的伴侣"],
+                tags: ["组织者", "果断", "注重效率", "传统", "有责任感"],
+                icon: "📊",
+                color: "#b45309"
+            },
+            "ESFJ": {
+                name: "执政官",
+                category: "守护者",
+                slogan: "热情的照顾者，社交的明星",
+                intro: "你是一个热情、体贴的社交达人，致力于创造和谐的人际关系。你善于照顾他人，是受欢迎的朋友和伙伴。",
+                traits: ["热情、友好、善于社交", "体贴、关心他人需求", "有责任心", "注重传统和规则", "受欢迎，有影响力"],
+                career: ["适合服务和关怀他人的工作", "护士、教师、销售、HR", "喜欢需要人际互动的环境", "需要被喜欢和认可"],
+                relationships: ["付出型人格，照顾他人", "需要维护和谐关系", "重视承诺和责任", "寻找能够欣赏自己的伴侣"],
+                tags: ["社交达人", "热情", "体贴", "有责任感", "受欢迎"],
+                icon: "🎉",
+                color: "#be185d"
+            },
+            "ISTP": {
+                name: "鉴赏家",
+                category: "探险家",
+                slogan: "务实的工匠，行动的思考者",
+                intro: "你是一个务实的行动者，擅长分析和解决实际问题。你独立、灵活，对机械和动手操作有天赋。",
+                traits: ["务实、动手能力强", "善于分析问题", "冷静、理性", "适应力强", "喜欢探索和实验"],
+                career: ["适合需要动手能力的工作", "工程师、飞行员、厨师", "适合需要解决问题的环境", "喜欢自由和独立"],
+                relationships: ["独立、空间需求高", "不善表达但行动关心", "需要理解他们的空间", "欣赏能够一起动手的伴侣"],
+                tags: ["工匠", "务实", "独立", "冷静", "动手能力强"],
+                icon: "🔧",
+                color: "#475569"
+            },
+            "ISFP": {
+                name: "探险家",
+                category: "探险家",
+                slogan: "自由的艺术家，美的发现者",
+                intro: "你是一个自由、敏感的艺术家，追求美和真实的体验。你温柔、有耐心，善于发现生活中的美好。",
+                traits: ["艺术感、审美能力", "敏感、细腻", "灵活、适应力强", "专注当下", "善良、真诚"],
+                career: ["适合创作和艺术类工作", "设计师、摄影师、艺术家", "喜欢自由和灵活的环境", "需要表达美的渠道"],
+                relationships: ["温柔、体贴", "需要空间和自由", "不善表达但内心丰富", "寻找能够欣赏美的伴侣"],
+                tags: ["艺术家", "敏感", "自由", "善良", "审美能力强"],
+                icon: "🎭",
+                color: "#0f766e"
+            },
+            "ESTP": {
+                name: "企业家",
+                category: "探险家",
+                slogan: "大胆的行动者，机会的捕手",
+                intro: "你是一个充满活力和冒险精神的行动者。你果断、实际，善于把握机会和应对挑战。",
+                traits: ["充满活力、冒险精神", "务实、注重结果", "善于社交、有魅力", "适应力强", "善于把握机会"],
+                career: ["适合需要冒险和行动的工作", "企业家、销售、运动员", "适合快节奏的环境", "喜欢挑战和刺激"],
+                relationships: ["有趣、充满活力", "善于社交", "需要新鲜感和刺激", "欣赏能够一起冒险的伴侣"],
+                tags: ["冒险家", "务实", "有魅力", "充满活力", "善于社交"],
+                icon: "🚀",
+                color: "#ea580c"
+            },
+            "ESFP": {
+                name: "表演者",
+                category: "探险家",
+                slogan: "舞台的明星，快乐的使者",
+                intro: "你是一个热情、奔放的社交明星，热爱生活和分享快乐。你 spontaneous、有感染力，总是舞台的中心。",
+                traits: ["热情、有感染力", "善于社交、受欢迎", "自发、有趣", "活在当下", "热爱生活"],
+                career: ["适合需要表现和互动的工作", "演员、主持人、销售", "适合需要社交的环境", "喜欢成为焦点"],
+                relationships: ["热情浪漫，魅力四射", "善于社交的需要关注", "需要新鲜感", "寻找能够欣赏自己的伴侣"],
+                tags: ["表演者", "热情", "有感染力", "善于社交", "活在当下"],
+                icon: "🎤",
+                color: "#db2777"
+            }
+        };
+
+        // Dimension info
+        const dimensionInfo = {
+            EI: { name: "内外向", left: "内向", right: "外向", color: "#f59e0b", icon: "🧠" },
+            SN: { name: "感觉直觉", left: "感觉", right: "直觉", color: "#10b981", icon: "👁️" },
+            TF: { name: "思考情感", left: "思考", right: "情感", color: "#3b82f6", icon: "❤️" },
+            JP: { name: "判断知觉", left: "判断", right: "知觉", color: "#8b5cf6", icon: "📋" }
+        };
+
+        // State
+        let currentQuestion = 0;
+        let scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+        let answeredQuestions = [];
+
+        // Functions
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function startTest() {
+            currentQuestion = 0;
+            scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+            answeredQuestions = [];
+            showScreen('question-screen');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('current-q').textContent = currentQuestion + 1;
+            document.getElementById('total-q').textContent = questions.length;
+            document.getElementById('progress-fill').style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
+            document.getElementById('dimension-label').textContent = '维度：' + q.dimension;
+            document.getElementById('question-text').textContent = q.question;
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = q.options.map((opt, idx) => `
+                <div class="option" onclick="selectOption('${opt.value}')">
+                    <div class="option-indicator"></div>
+                    <span class="option-text">${opt.text}</span>
+                </div>
+            `).join('');
+        }
+
+        function selectOption(value) {
+            // Mark selected
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, idx) => {
+                opt.classList.remove('selected');
+                if (questions[currentQuestion].options[idx].value === value) {
+                    opt.classList.add('selected');
+                }
+            });
+
+            // Record answer
+            answeredQuestions.push({
+                dimension: questions[currentQuestion].dimensionKey,
+                value: value
+            });
+
+            // Update scores
+            scores[value]++;
+
+            // Next question after brief delay
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    renderQuestion();
+                } else {
+                    // All questions answered - show payment screen
+                    showScreen('payment-screen');
+                }
+            }, 300);
+        }
+
+        function simulatePayment() {
+            // Show loading animation
+            showScreen('loading-screen');
+
+            // Simulate processing delay
+            setTimeout(() => {
+                generateReport();
+                showScreen('report-screen');
+            }, 2000);
+        }
+
+        function calculateMBTI() {
+            let type = "";
+
+            // EI dimension
+            if (scores['E'] > scores['I']) {
+                type += "E";
+            } else if (scores['I'] > scores['E']) {
+                type += "I";
+            } else {
+                type += Math.random() > 0.5 ? "E" : "I";
+            }
+
+            // SN dimension
+            if (scores['N'] > scores['S']) {
+                type += "N";
+            } else if (scores['S'] > scores['N']) {
+                type += "S";
+            } else {
+                type += Math.random() > 0.5 ? "N" : "S";
+            }
+
+            // TF dimension
+            if (scores['T'] > scores['F']) {
+                type += "T";
+            } else if (scores['F'] > scores['T']) {
+                type += "F";
+            } else {
+                type += Math.random() > 0.5 ? "T" : "F";
+            }
+
+            // JP dimension
+            if (scores['J'] > scores['P']) {
+                type += "J";
+            } else if (scores['P'] > scores['J']) {
+                type += "P";
+            } else {
+                type += Math.random() > 0.5 ? "J" : "P";
+            }
+
+            return type;
+        }
+
+        function drawRadarChart(mbtiType) {
+            const canvas = document.getElementById('radarChart');
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 80;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Calculate scores (normalize to 0-1)
+            const eiScore = scores['E'] / 7;
+            const snScore = scores['N'] / 7;
+            const tfScore = scores['T'] / 7;
+            const jpScore = scores['J'] / 7;
+
+            const values = [eiScore, snScore, tfScore, jpScore];
+            const labels = ['外向', '直觉', '思考', '判断'];
+            const colors = ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
+
+            // Draw background circles
+            ctx.strokeStyle = 'rgba(99, 102, 241, 0.1)';
+            ctx.lineWidth = 1;
+            for (let i = 1; i <= 4; i++) {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius * (i / 4), 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // Draw grid lines
+            for (let i = 0; i < 4; i++) {
+                const angle = (Math.PI * 2 * i) / 4 - Math.PI / 2;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(centerX + Math.cos(angle) * radius, centerY + Math.sin(angle) * radius);
+                ctx.stroke();
+            }
+
+            // Draw data polygon
+            ctx.beginPath();
+            for (let i = 0; i < 4; i++) {
+                const angle = (Math.PI * 2 * i) / 4 - Math.PI / 2;
+                const value = values[i];
+                const x = centerX + Math.cos(angle) * radius * value;
+                const y = centerY + Math.sin(angle) * radius * value;
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.closePath();
+
+            // Fill and stroke
+            const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+            gradient.addColorStop(0, 'rgba(99, 102, 241, 0.3)');
+            gradient.addColorStop(1, 'rgba(99, 102, 241, 0.1)');
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw data points
+            for (let i = 0; i < 4; i++) {
+                const angle = (Math.PI * 2 * i) / 4 - Math.PI / 2;
+                const value = values[i];
+                const x = centerX + Math.cos(angle) * radius * value;
+                const y = centerY + Math.sin(angle) * radius * value;
+
+                ctx.beginPath();
+                ctx.arc(x, y, 6, 0, Math.PI * 2);
+                ctx.fillStyle = colors[i];
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Draw labels
+            ctx.font = '12px "Noto Sans SC", sans-serif';
+            ctx.fillStyle = '#64748b';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            for (let i = 0; i < 4; i++) {
+                const angle = (Math.PI * 2 * i) / 4 - Math.PI / 2;
+                const labelRadius = radius + 24;
+                const x = centerX + Math.cos(angle) * labelRadius;
+                const y = centerY + Math.sin(angle) * labelRadius;
+                ctx.fillStyle = colors[i];
+                ctx.fillText(labels[i], x, y);
+            }
+        }
+
+        function generateReport() {
+            const mbtiType = calculateMBTI();
+            const typeData = personalityTypes[mbtiType];
+
+            // Update hero section
+            document.getElementById('report-type').textContent = mbtiType;
+            document.getElementById('report-name').textContent = typeData.name;
+            document.getElementById('report-slogan').textContent = '"' + typeData.slogan + '"';
+
+            // Dimension tags
+            const dimE = scores['E'] >= scores['I'] ? 'E' : 'I';
+            const dimS = scores['S'] >= scores['N'] ? 'S' : 'N';
+            const dimT = scores['T'] >= scores['F'] ? 'T' : 'F';
+            const dimJ = scores['J'] >= scores['P'] ? 'J' : 'P';
+
+            const dimTagsHTML = `
+                <div class="dimension-tag ei">${dimE === 'E' ? '外向' : '内向'}</div>
+                <div class="dimension-tag sn">${dimS === 'N' ? '直觉' : '感觉'}</div>
+                <div class="dimension-tag tf">${dimT === 'T' ? '思考' : '情感'}</div>
+                <div class="dimension-tag jp">${dimJ === 'J' ? '判断' : '知觉'}</div>
+            `;
+            document.getElementById('dimension-tags').innerHTML = dimTagsHTML;
+
+            // Personality icon
+            document.getElementById('personality-icon').textContent = typeData.icon;
+
+            // Draw radar chart
+            setTimeout(() => {
+                drawRadarChart(mbtiType);
+            }, 100);
+
+            // Score labels
+            const scoreLabelsHTML = `
+                <div class="score-label">
+                    <div class="dot" style="background: #f59e0b"></div>
+                    <span class="label-text">外向 / 内向</span>
+                    <span class="label-value">${scores['E'] > scores['I'] ? scores['E'] + ' : ' + scores['I'] : scores['I'] + ' : ' + scores['E']}</span>
+                </div>
+                <div class="score-label">
+                    <div class="dot" style="background: #10b981"></div>
+                    <span class="label-text">直觉 / 感觉</span>
+                    <span class="label-value">${scores['N'] > scores['S'] ? scores['N'] + ' : ' + scores['S'] : scores['S'] + ' : ' + scores['N']}</span>
+                </div>
+                <div class="score-label">
+                    <div class="dot" style="background: #3b82f6"></div>
+                    <span class="label-text">思考 / 情感</span>
+                    <span class="label-value">${scores['T'] > scores['F'] ? scores['T'] + ' : ' + scores['F'] : scores['F'] + ' : ' + scores['T']}</span>
+                </div>
+                <div class="score-label">
+                    <div class="dot" style="background: #8b5cf6"></div>
+                    <span class="label-text">判断 / 知觉</span>
+                    <span class="label-value">${scores['J'] > scores['P'] ? scores['J'] + ' : ' + scores['P'] : scores['P'] + ' : ' + scores['J']}</span>
+                </div>
+            `;
+            document.getElementById('score-labels').innerHTML = scoreLabelsHTML;
+
+            // Personality tags
+            const tagsHTML = typeData.tags.map(tag => `<span class="personality-tag">#${tag}</span>`).join('');
+            document.getElementById('personality-tags').innerHTML = tagsHTML;
+
+            // Intro
+            document.getElementById('report-intro').textContent = typeData.intro;
+
+            // Traits
+            const traitsHTML = typeData.traits.map((trait, idx) => `
+                <li>
+                    <div class="list-bullet">${idx + 1}</div>
+                    <div class="list-text">${trait}</div>
+                </li>
+            `).join('');
+            document.getElementById('report-traits').innerHTML = traitsHTML;
+
+            // Career
+            const careerHTML = typeData.career.map(c => `
+                <li>
+                    <div class="list-bullet">✓</div>
+                    <div class="list-text">${c}</div>
+                </li>
+            `).join('');
+            document.getElementById('report-career').innerHTML = careerHTML;
+
+            // Relationships
+            const relationshipsHTML = typeData.relationships.map(r => `
+                <li>
+                    <div class="list-bullet">♥</div>
+                    <div class="list-text">${r}</div>
+                </li>
+            `).join('');
+            document.getElementById('report-relationships').innerHTML = relationshipsHTML;
+
+            // Share preview
+            document.getElementById('share-type').textContent = mbtiType;
+            document.getElementById('share-name').textContent = typeData.name;
+            document.getElementById('share-slogan').textContent = '"' + typeData.slogan + '"';
+        }
+
+        function showShareModal() {
+            const modal = document.getElementById('shareModal');
+            modal.classList.add('active');
+
+            // Generate share canvas
+            setTimeout(() => {
+                generateShareImage();
+            }, 100);
+        }
+
+        function hideShareModal() {
+            const modal = document.getElementById('shareModal');
+            modal.classList.remove('active');
+        }
+
+        function generateShareImage() {
+            const canvas = document.getElementById('shareCanvas');
+            const ctx = canvas.getContext('2d');
+            const mbtiType = document.getElementById('report-type').textContent;
+            const typeData = personalityTypes[mbtiType];
+
+            // Clear
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#6366f1');
+            gradient.addColorStop(1, '#818cf8');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Decorative circles
+            ctx.globalAlpha = 0.1;
+            ctx.beginPath();
+            ctx.arc(50, 50, 100, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(280, 350, 80, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+
+            // Badge
+            ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            ctx.beginPath();
+            ctx.roundRect(90, 40, 120, 28, 14);
+            ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.font = '12px "Noto Sans SC", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('MBTI 性格测试', 150, 58);
+
+            // Type letter
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 72px "Noto Sans SC", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(mbtiType, 150, 160);
+
+            // Name
+            ctx.font = '28px "Noto Sans SC", sans-serif';
+            ctx.fillText(typeData.name, 150, 205);
+
+            // Slogan
+            ctx.font = '14px "Noto Sans SC", sans-serif';
+            ctx.globalAlpha = 0.9;
+            ctx.fillText(typeData.slogan, 150, 240);
+            ctx.globalAlpha = 1;
+
+            // Dimension tags
+            const dimE = scores['E'] >= scores['I'] ? '外向' : '内向';
+            const dimS = scores['S'] >= scores['N'] ? '直觉' : '感觉';
+            const dimT = scores['T'] >= scores['F'] ? '思考' : '情感';
+            const dimJ = scores['J'] >= scores['P'] ? '判断' : '知觉';
+
+            const tags = [dimE, dimS, dimT, dimJ];
+            const tagColors = ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
+            let tagX = 30;
+            tags.forEach((tag, i) => {
+                const tagWidth = ctx.measureText(tag).width + 24;
+                ctx.fillStyle = tagColors[i];
+                ctx.beginPath();
+                ctx.roundRect(tagX, 275, tagWidth, 26, 13);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = '12px "Noto Sans SC", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(tag, tagX + tagWidth / 2, 292);
+                tagX += tagWidth + 8;
+            });
+
+            // Personality tags
+            const tags2 = typeData.tags.slice(0, 3);
+            let tag2X = 30;
+            tags2.forEach((tag) => {
+                const tagWidth = ctx.measureText('#' + tag).width + 20;
+                ctx.fillStyle = 'rgba(255,255,255,0.2)';
+                ctx.beginPath();
+                ctx.roundRect(tag2X, 320, tagWidth, 24, 12);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = '11px "Noto Sans SC", sans-serif';
+                ctx.fillText('#' + tag, tag2X + tagWidth / 2, 335);
+                tag2X += tagWidth + 8;
+            });
+
+            // Footer
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.font = '11px "Noto Sans SC", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('长按保存图片 · 分享到社交媒体', 150, 380);
+        }
+
+        function shareReport() {
+            const type = document.getElementById('report-type').textContent;
+            const name = document.getElementById('report-name').textContent;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: '我的MBTI性格测试结果',
+                    text: `我的MBTI是${type}（${name}）！快来测测你的吧！`,
+                    url: window.location.href
+                });
+            } else {
+                showShareModal();
+            }
+        }
+
+        function retest() {
+            startTest();
+        }
+
+        // Close modal on outside click
+        document.getElementById('shareModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideShareModal();
+            }
+        });
+    </script>
+</body>
+</html>
