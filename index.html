@@ -1239,150 +1239,198 @@
     <script>
         // ============ QUESTION DATA ============
         const questions = [
-            {
-                dimension: "EI",
-                dimensionName: "外向 - 内向",
-                emoji: "🌟",
-                text: "在聚会上，你通常会？",
-                options: [
-                    { text: "主动和陌生人聊天，感觉充满能量", value: "E", emoji: "🔥" },
-                    { text: "等待别人来接近我，需要时间充电", value: "I", emoji: "🌙" },
-                    { text: "和认识的朋友待在一起", value: "I", emoji: "👥" },
-                    { text: "观察人群，不急着互动", value: "I", emoji: "🔍" }
-                ]
-            },
-            {
-                dimension: "EI",
-                dimensionName: "外向 - 内向",
-                emoji: "💭",
-                text: "当你独自一人时，你通常会？",
-                options: [
-                    { text: "很快感到无聊，想找人聊天", value: "E", emoji: "😣" },
-                    { text: "享受独处的时间，进行深度思考", value: "I", emoji: "✨" },
-                    { text: "做自己喜欢的事情，很充实", value: "I", emoji: "🎯" },
-                    { text: "有时候会感到孤独", value: "E", emoji: "😔" }
-                ]
-            },
-            {
-                dimension: "EI",
-                dimensionName: "外向 - 内向",
-                emoji: "🎤",
-                text: "在团队讨论中，你倾向于？",
-                options: [
-                    { text: "积极发言，分享自己的想法", value: "E", emoji: "🗣️" },
-                    { text: "先听别人说，再发表意见", value: "I", emoji: "👂" },
-                    { text: "只说必要的话", value: "I", emoji: "🤐" },
-                    { text: "视情况而定", value: "E", emoji: "⚖️" }
-                ]
-            },
-            {
-                dimension: "SN",
-                dimensionName: "直觉 - 感觉",
-                emoji: "🔮",
-                text: "你更关注事物的？",
-                options: [
-                    { text: "抽象的可能性和未来发展", value: "N", emoji: "🌈" },
-                    { text: "具体的事实和现实细节", value: "S", emoji: "📊" },
-                    { text: "当下的实际情况", value: "S", emoji: "🎯" },
-                    { text: "长远的影响和意义", value: "N", emoji: "🔭" }
-                ]
-            },
-            {
-                dimension: "SN",
-                dimensionName: "直觉 - 感觉",
-                emoji: "📚",
-                text: "学习新东西时，你更喜欢？",
-                options: [
-                    { text: "探索理论背后的原理", value: "N", emoji: "🧠" },
-                    { text: "结合实际案例来理解", value: "S", emoji: "💡" },
-                    { text: "按照教程步骤操作", value: "S", emoji: "📖" },
-                    { text: "自己摸索创新方法", value: "N", emoji: "🚀" }
-                ]
-            },
-            {
-                dimension: "SN",
-                dimensionName: "直觉 - 感觉",
-                emoji: "💡",
-                text: "描述「梦想」时，你更倾向于？",
-                options: [
-                    { text: "描述愿景和可能性", value: "N", emoji: "✨" },
-                    { text: "描述具体的目标和计划", value: "S", emoji: "📋" },
-                    { text: "谈论现实可行的规划", value: "S", emoji: "🎯" },
-                    { text: "两者结合", value: "N", emoji: "⚡" }
-                ]
-            },
-            {
-                dimension: "TF",
-                dimensionName: "思考 - 情感",
-                emoji: "⚖️",
-                text: "做决定时，你更看重？",
-                options: [
-                    { text: "逻辑和客观分析", value: "T", emoji: "🔬" },
-                    { text: "对他人的影响和感受", value: "F", emoji: "❤️" },
-                    { text: "公平性和一致性", value: "T", emoji: "📏" },
-                    { text: "人际和谐", value: "F", emoji: "🤝" }
-                ]
-            },
-            {
-                dimension: "TF",
-                dimensionName: "思考 - 情感",
-                emoji: "💬",
-                text: "当朋友向你倾诉烦恼时，你通常会？",
-                options: [
-                    { text: "分析问题，给出解决方案", value: "T", emoji: "🔧" },
-                    { text: "先给予情感支持和安慰", value: "F", emoji: "🤗" },
-                    { text: "分享类似经历", value: "F", emoji: "💭" },
-                    { text: "尽量理性客观地看待", value: "T", emoji: "⚖️" }
-                ]
-            },
-            {
-                dimension: "TF",
-                dimensionName: "思考 - 情感",
-                emoji: "🎯",
-                text: "你认为自己更擅长？",
-                options: [
-                    { text: "分析利弊，做出最优解", value: "T", emoji: "📊" },
-                    { text: "理解他人需求，给予支持", value: "F", emoji: "💕" },
-                    { text: "平衡逻辑和情感", value: "T", emoji: "⚡" },
-                    { text: "照顾他人情绪", value: "F", emoji: "🌸" }
-                ]
-            },
-            {
-                dimension: "JP",
-                dimensionName: "判断 - 知觉",
-                emoji: "📋",
-                text: "你更喜欢哪种工作方式？",
-                options: [
-                    { text: "按计划进行，有明确截止日期", value: "J", emoji: "📅" },
-                    { text: "灵活应变，随机应变", value: "P", emoji: "🎪" },
-                    { text: "有框架但可以调整", value: "J", emoji: "🗂️" },
-                    { text: "跟随情况变化", value: "P", emoji: "🌊" }
-                ]
-            },
-            {
-                dimension: "JP",
-                dimensionName: "判断 - 知觉",
-                emoji: "🏠",
-                text: "旅行时，你通常会？",
-                options: [
-                    { text: "提前规划好每一天的行程", value: "J", emoji: "🗺️" },
-                    { text: "走到哪算哪，随性而为", value: "P", emoji: "✨" },
-                    { text: "大致规划，保留弹性", value: "J", emoji: "📍" },
-                    { text: "享受意外发现的惊喜", value: "P", emoji: "🎁" }
-                ]
-            },
-            {
-                dimension: "JP",
-                dimensionName: "判断 - 知觉",
-                emoji: "📝",
-                text: "面对 deadline 时，你通常是？",
-                options: [
-                    { text: "提前完成，避免压力", value: "J", emoji: "🏆" },
-                    { text: "最后时刻灵感爆发", value: "P", emoji: "⚡" },
-                    { text: "有计划地推进", value: "J", emoji: "📈" },
-                    { text: "视情况而定", value: "P", emoji: "🎯" }
-                ]
-            }
+            { dimension: "EI", dimensionName: "外向 - 内向", emoji: "🌟", text: "新环境里你通常", options: [
+                { text: "先主动开口认识人", value: "E", weight: 2, emoji: "🔥" },
+                { text: "别人来聊也能自然接住", value: "E", weight: 1, emoji: "🙂" },
+                { text: "先观察氛围再决定", value: "I", weight: 1, emoji: "👀" },
+                { text: "更愿意等熟悉后再交流", value: "I", weight: 2, emoji: "🌙" }
+            ]},
+            { dimension: "EI", dimensionName: "外向 - 内向", emoji: "🔋", text: "连续忙了几天后，你恢复状态更常靠", options: [
+                { text: "约人聊聊或出去走走", value: "E", weight: 2, emoji: "☀️" },
+                { text: "和熟人待一会儿", value: "E", weight: 1, emoji: "🫶" },
+                { text: "一个人做点喜欢的事", value: "I", weight: 1, emoji: "🎧" },
+                { text: "完全独处，不太想被打扰", value: "I", weight: 2, emoji: "🌌" }
+            ]},
+            { dimension: "EI", dimensionName: "外向 - 内向", emoji: "🎤", text: "开会讨论时你更常", options: [
+                { text: "边说边想，先把观点抛出来", value: "E", weight: 2, emoji: "🗣️" },
+                { text: "有想法就及时补充", value: "E", weight: 1, emoji: "💬" },
+                { text: "想清楚后再发言", value: "I", weight: 1, emoji: "🧠" },
+                { text: "会后整理好再表达", value: "I", weight: 2, emoji: "📝" }
+            ]},
+            { dimension: "EI", dimensionName: "外向 - 内向", emoji: "✨", text: "遇到一件让你兴奋的事，你第一反应是", options: [
+                { text: "立刻找人分享", value: "E", weight: 2, emoji: "📣" },
+                { text: "很快告诉亲近的人", value: "E", weight: 1, emoji: "💞" },
+                { text: "先自己消化一下", value: "I", weight: 1, emoji: "🌿" },
+                { text: "更想留在心里慢慢体会", value: "I", weight: 2, emoji: "🌠" }
+            ]},
+            { dimension: "EI", dimensionName: "外向 - 内向", emoji: "🤝", text: "和不熟的人共处时，你通常", options: [
+                { text: "很快进入互动状态", value: "E", weight: 2, emoji: "🚀" },
+                { text: "对方友好就会聊起来", value: "E", weight: 1, emoji: "😊" },
+                { text: "需要一点时间热身", value: "I", weight: 1, emoji: "⏳" },
+                { text: "会本能地保持克制", value: "I", weight: 2, emoji: "🫥" }
+            ]},
+            { dimension: "EI", dimensionName: "外向 - 内向", emoji: "🧭", text: "做决定前你更习惯", options: [
+                { text: "先和别人讨论碰撞", value: "E", weight: 2, emoji: "⚡" },
+                { text: "听听外部意见再定", value: "E", weight: 1, emoji: "👂" },
+                { text: "先自己想清楚", value: "I", weight: 1, emoji: "🪞" },
+                { text: "内部想透后才让别人知道", value: "I", weight: 2, emoji: "🔐" }
+            ]},
+            { dimension: "EI", dimensionName: "外向 - 内向", emoji: "🏖️", text: "周末如果没有安排，你更可能", options: [
+                { text: "临时约人见面或出门", value: "E", weight: 2, emoji: "🎉" },
+                { text: "看情况找个伴", value: "E", weight: 1, emoji: "🚶" },
+                { text: "在家做自己的事", value: "I", weight: 1, emoji: "📚" },
+                { text: "主动保留独处空间", value: "I", weight: 2, emoji: "🏡" }
+            ]},
+            { dimension: "EI", dimensionName: "外向 - 内向", emoji: "🪞", text: "别人眼里的你更像", options: [
+                { text: "有存在感、容易带动气氛", value: "E", weight: 2, emoji: "🌞" },
+                { text: "好相处、能自然接话", value: "E", weight: 1, emoji: "🌼" },
+                { text: "安静但有自己的节奏", value: "I", weight: 1, emoji: "🍃" },
+                { text: "话不多，但观察很深", value: "I", weight: 2, emoji: "🦉" }
+            ]},
+            { dimension: "SN", dimensionName: "直觉 - 感觉", emoji: "🔮", text: "听人描述一个计划时，你先关注", options: [
+                { text: "它未来可能发展成什么", value: "N", weight: 2, emoji: "🌈" },
+                { text: "它的大方向有没有吸引力", value: "N", weight: 1, emoji: "🛸" },
+                { text: "它现在具体怎么落地", value: "S", weight: 1, emoji: "🧱" },
+                { text: "它有哪些现实条件和细节", value: "S", weight: 2, emoji: "📋" }
+            ]},
+            { dimension: "SN", dimensionName: "直觉 - 感觉", emoji: "📚", text: "学一个新东西时，你更想先知道", options: [
+                { text: "背后的逻辑和框架", value: "N", weight: 2, emoji: "🧠" },
+                { text: "它和别的东西有什么关联", value: "N", weight: 1, emoji: "🕸️" },
+                { text: "具体步骤怎么做", value: "S", weight: 1, emoji: "🪜" },
+                { text: "现实里别人怎么用", value: "S", weight: 2, emoji: "🔧" }
+            ]},
+            { dimension: "SN", dimensionName: "直觉 - 感觉", emoji: "🎞️", text: "别人讲一个经历时，你更容易记住", options: [
+                { text: "其中隐藏的意义和趋势", value: "N", weight: 2, emoji: "🔭" },
+                { text: "让你联想到的新可能", value: "N", weight: 1, emoji: "💡" },
+                { text: "发生了什么关键事实", value: "S", weight: 1, emoji: "🧾" },
+                { text: "细节、场景和过程", value: "S", weight: 2, emoji: "📍" }
+            ]},
+            { dimension: "SN", dimensionName: "直觉 - 感觉", emoji: "🧩", text: "处理问题时你更相信", options: [
+                { text: "先看整体模式和方向", value: "N", weight: 2, emoji: "🛰️" },
+                { text: "抓住关键概念再展开", value: "N", weight: 1, emoji: "🧭" },
+                { text: "先看已有事实证据", value: "S", weight: 1, emoji: "📊" },
+                { text: "先把现实情况摸清", value: "S", weight: 2, emoji: "🪨" }
+            ]},
+            { dimension: "SN", dimensionName: "直觉 - 感觉", emoji: "✈️", text: "旅行前你更在意", options: [
+                { text: "这趟旅程会带来什么体验和故事", value: "N", weight: 2, emoji: "🌍" },
+                { text: "有没有特别的新鲜感", value: "N", weight: 1, emoji: "🎈" },
+                { text: "路线、交通和住宿是否稳妥", value: "S", weight: 1, emoji: "🚉" },
+                { text: "预算、时间和安排是否清楚", value: "S", weight: 2, emoji: "💼" }
+            ]},
+            { dimension: "SN", dimensionName: "直觉 - 感觉", emoji: "⏳", text: "别人说“以后再看”时，你更容易想到", options: [
+                { text: "事情未来可能的变化", value: "N", weight: 2, emoji: "🌠" },
+                { text: "还有哪些潜在机会没展开", value: "N", weight: 1, emoji: "🪄" },
+                { text: "目前具体卡在哪", value: "S", weight: 1, emoji: "🧱" },
+                { text: "现在能立刻做什么", value: "S", weight: 2, emoji: "🛠️" }
+            ]},
+            { dimension: "SN", dimensionName: "直觉 - 感觉", emoji: "🗣️", text: "你更喜欢哪种表达方式", options: [
+                { text: "给我一个视角，我自己延展", value: "N", weight: 2, emoji: "🌌" },
+                { text: "先讲核心意思，再慢慢展开", value: "N", weight: 1, emoji: "🪁" },
+                { text: "给我清楚步骤，我照着做", value: "S", weight: 1, emoji: "📖" },
+                { text: "把例子和细节讲明白", value: "S", weight: 2, emoji: "🔎" }
+            ]},
+            { dimension: "SN", dimensionName: "直觉 - 感觉", emoji: "🏷️", text: "你更常被人评价为", options: [
+                { text: "想法跳跃、爱联想", value: "N", weight: 2, emoji: "⚡" },
+                { text: "有方向感、看得远", value: "N", weight: 1, emoji: "🧭" },
+                { text: "稳、靠谱、接地气", value: "S", weight: 1, emoji: "🌾" },
+                { text: "细致、重实际、重经验", value: "S", weight: 2, emoji: "🧰" }
+            ]},
+            { dimension: "TF", dimensionName: "思考 - 情感", emoji: "⚖️", text: "做选择时你更先问自己", options: [
+                { text: "哪个更合理", value: "T", weight: 2, emoji: "🧪" },
+                { text: "哪个标准更一致", value: "T", weight: 1, emoji: "📏" },
+                { text: "哪个更照顾关系", value: "F", weight: 1, emoji: "🤝" },
+                { text: "哪个更符合人的感受", value: "F", weight: 2, emoji: "❤️" }
+            ]},
+            { dimension: "TF", dimensionName: "思考 - 情感", emoji: "🫂", text: "别人来求助时你通常", options: [
+                { text: "先帮他拆问题", value: "T", weight: 2, emoji: "🧩" },
+                { text: "先给方向和建议", value: "T", weight: 1, emoji: "🧭" },
+                { text: "先接住情绪再说", value: "F", weight: 1, emoji: "🤗" },
+                { text: "先让对方感觉被理解", value: "F", weight: 2, emoji: "🌷" }
+            ]},
+            { dimension: "TF", dimensionName: "思考 - 情感", emoji: "🚫", text: "你更难接受的是", options: [
+                { text: "逻辑混乱、标准双标", value: "T", weight: 2, emoji: "🪓" },
+                { text: "决策太随意、没依据", value: "T", weight: 1, emoji: "📉" },
+                { text: "对人太冷、没有分寸", value: "F", weight: 1, emoji: "🥶" },
+                { text: "明明伤人了却不自知", value: "F", weight: 2, emoji: "💔" }
+            ]},
+            { dimension: "TF", dimensionName: "思考 - 情感", emoji: "🔍", text: "评价一件事时你更容易说", options: [
+                { text: "这件事讲不讲道理", value: "T", weight: 2, emoji: "⚙️" },
+                { text: "这个方案是否高效", value: "T", weight: 1, emoji: "📈" },
+                { text: "这样做别人会怎么感受", value: "F", weight: 1, emoji: "💭" },
+                { text: "会不会破坏关系和信任", value: "F", weight: 2, emoji: "🫀" }
+            ]},
+            { dimension: "TF", dimensionName: "思考 - 情感", emoji: "👥", text: "团队分歧时你更倾向", options: [
+                { text: "先回到问题本身", value: "T", weight: 2, emoji: "🎯" },
+                { text: "先厘清规则和目标", value: "T", weight: 1, emoji: "📐" },
+                { text: "先缓和彼此情绪", value: "F", weight: 1, emoji: "🌿" },
+                { text: "先避免有人被压住或受伤", value: "F", weight: 2, emoji: "🛟" }
+            ]},
+            { dimension: "TF", dimensionName: "思考 - 情感", emoji: "🏅", text: "你更希望别人认可你", options: [
+                { text: "判断清楚、脑子在线", value: "T", weight: 2, emoji: "🧠" },
+                { text: "可靠、讲原则", value: "T", weight: 1, emoji: "🪜" },
+                { text: "真诚、有温度", value: "F", weight: 1, emoji: "🌸" },
+                { text: "理解人、让人舒服", value: "F", weight: 2, emoji: "☁️" }
+            ]},
+            { dimension: "TF", dimensionName: "思考 - 情感", emoji: "🗨️", text: "批评别人时你更常", options: [
+                { text: "直指问题本身", value: "T", weight: 2, emoji: "🪓" },
+                { text: "尽量讲清理由", value: "T", weight: 1, emoji: "📘" },
+                { text: "顾及对方接受度", value: "F", weight: 1, emoji: "🫶" },
+                { text: "先想怎么说不伤人", value: "F", weight: 2, emoji: "🩹" }
+            ]},
+            { dimension: "TF", dimensionName: "思考 - 情感", emoji: "⚔️", text: "当规则和人情冲突时，你更容易偏向", options: [
+                { text: "规则优先", value: "T", weight: 2, emoji: "🧱" },
+                { text: "先守住基本原则", value: "T", weight: 1, emoji: "📌" },
+                { text: "看关系和具体情境", value: "F", weight: 1, emoji: "🌊" },
+                { text: "宁可灵活一点，也不想太伤人", value: "F", weight: 2, emoji: "🤲" }
+            ]},
+            { dimension: "JP", dimensionName: "判断 - 知觉", emoji: "📋", text: "面对一个任务，你更舒服的状态是", options: [
+                { text: "尽快确定计划并推进", value: "J", weight: 2, emoji: "✅" },
+                { text: "有大致结构再开始", value: "J", weight: 1, emoji: "🗂️" },
+                { text: "先做着看，再边走边调", value: "P", weight: 1, emoji: "🌿" },
+                { text: "保持开放，临场优化", value: "P", weight: 2, emoji: "🎈" }
+            ]},
+            { dimension: "JP", dimensionName: "判断 - 知觉", emoji: "🧳", text: "出门旅行时你更常", options: [
+                { text: "提前把关键安排定好", value: "J", weight: 2, emoji: "🗺️" },
+                { text: "大方向确定，细节可调", value: "J", weight: 1, emoji: "📍" },
+                { text: "先出发，过程再说", value: "P", weight: 1, emoji: "🚶" },
+                { text: "喜欢即兴变化带来的惊喜", value: "P", weight: 2, emoji: "🎁" }
+            ]},
+            { dimension: "JP", dimensionName: "判断 - 知觉", emoji: "⏰", text: "deadline 临近时你更像", options: [
+                { text: "早早推进，避免堆积", value: "J", weight: 2, emoji: "🏁" },
+                { text: "会给自己留缓冲", value: "J", weight: 1, emoji: "📆" },
+                { text: "压力上来时效率反而更高", value: "P", weight: 1, emoji: "⚡" },
+                { text: "常在最后阶段集中爆发", value: "P", weight: 2, emoji: "🔥" }
+            ]},
+            { dimension: "JP", dimensionName: "判断 - 知觉", emoji: "🔄", text: "你对“突然改计划”的感受更接近", options: [
+                { text: "容易烦，想尽快重新排好", value: "J", weight: 2, emoji: "😵" },
+                { text: "会不舒服，但能调整", value: "J", weight: 1, emoji: "🪫" },
+                { text: "还好，本来就常随机应变", value: "P", weight: 1, emoji: "🪂" },
+                { text: "往往觉得这也许更有意思", value: "P", weight: 2, emoji: "🎢" }
+            ]},
+            { dimension: "JP", dimensionName: "判断 - 知觉", emoji: "🗄️", text: "你整理生活或工作时更像", options: [
+                { text: "喜欢清晰、分类、可控", value: "J", weight: 2, emoji: "📚" },
+                { text: "关键部分会整理好", value: "J", weight: 1, emoji: "🧾" },
+                { text: "需要时再整理", value: "P", weight: 1, emoji: "🪄" },
+                { text: "按自己当下节奏放着", value: "P", weight: 2, emoji: "🌊" }
+            ]},
+            { dimension: "JP", dimensionName: "判断 - 知觉", emoji: "🛣️", text: "做重大决定时你更想", options: [
+                { text: "尽快定下来，进入执行", value: "J", weight: 2, emoji: "🪙" },
+                { text: "在一定信息下做出判断", value: "J", weight: 1, emoji: "📌" },
+                { text: "先保留弹性，多看看", value: "P", weight: 1, emoji: "👀" },
+                { text: "不想太早被一个结论锁死", value: "P", weight: 2, emoji: "🕊️" }
+            ]},
+            { dimension: "JP", dimensionName: "判断 - 知觉", emoji: "🏷️", text: "对别人来说，你更像", options: [
+                { text: "有条理、讲秩序", value: "J", weight: 2, emoji: "🧱" },
+                { text: "可靠、能推进", value: "J", weight: 1, emoji: "🚂" },
+                { text: "灵活、好商量", value: "P", weight: 1, emoji: "🌿" },
+                { text: "随性、适应变化快", value: "P", weight: 2, emoji: "🪁" }
+            ]},
+            { dimension: "JP", dimensionName: "判断 - 知觉", emoji: "🪵", text: "当事情已经“差不多”时，你更可能", options: [
+                { text: "想把它收口定版", value: "J", weight: 2, emoji: "🔒" },
+                { text: "确认主要部分没问题", value: "J", weight: 1, emoji: "✔️" },
+                { text: "觉得还可以继续优化", value: "P", weight: 1, emoji: "🛠️" },
+                { text: "不想这么早盖棺定论", value: "P", weight: 2, emoji: "🌬️" }
+            ]}
         ];
 
         // ============ PERSONALITY DATA ============
@@ -1674,11 +1722,11 @@
 
             const currentAnswer = answers[currentQuestion];
             if (currentAnswer) {
-                const selectedIndex = q.options.findIndex(opt => opt.value === currentAnswer);
+                const selectedIndex = typeof currentAnswer.index === 'number' ? currentAnswer.index : q.options.findIndex(opt => opt.value === currentAnswer.value);
                 if (selectedIndex >= 0) {
                     const selectedCard = document.getElementById(`option-${selectedIndex}`);
                     if (selectedCard) selectedCard.classList.add('selected');
-                    selectedOption = { index: selectedIndex, value: currentAnswer };
+                    selectedOption = { index: selectedIndex, value: currentAnswer.value, weight: currentAnswer.weight };
                 }
             } else {
                 selectedOption = null;
@@ -1707,13 +1755,15 @@
 
             // Update score
             const prevValue = answers[currentQuestion];
-            if (prevValue) {
-                scores[prevValue] = Math.max(0, scores[prevValue] - 1);
+            const prevAnswer = answers[currentQuestion];
+            if (prevAnswer) {
+                scores[prevAnswer.value] = Math.max(0, scores[prevAnswer.value] - prevAnswer.weight);
             }
-            scores[value]++;
-            answers[currentQuestion] = value;
+            const option = questions[currentQuestion].options[index];
+            scores[value] += option.weight;
+            answers[currentQuestion] = { value, weight: option.weight, index };
 
-            selectedOption = { index, value };
+            selectedOption = { index, value, weight: option.weight };
 
             // Next question after delay
             if (nextTimer) {
@@ -1816,8 +1866,8 @@
 
         function preferenceStrength(a, b) {
             const diff = Math.abs(scores[a] - scores[b]);
-            if (diff >= 2) return '强';
-            if (diff === 1) return '中';
+            if (diff >= 7) return '强';
+            if (diff >= 4) return '中';
             return '轻';
         }
 
@@ -1864,6 +1914,50 @@
             return `这组关键词提醒你未来的成长方向：在保持优势的同时，补齐“节奏感与长期视角”。当你在高压或高效场景中容易走得太快时，适度放慢、复盘与倾听会让你的判断更稳。把关注点从“当下结果”扩展到“过程质量”，会带来更持续的提升。`;
         }
 
+        function buildDominantSummary() {
+            const parts = [
+                `${scores.E >= scores.I ? '外向' : '内向'}偏好${preferenceStrength('E','I')}`,
+                `${scores.S >= scores.N ? '感觉' : '直觉'}偏好${preferenceStrength('S','N')}`,
+                `${scores.T >= scores.F ? '思考' : '情感'}偏好${preferenceStrength('T','F')}`,
+                `${scores.J >= scores.P ? '判断' : '知觉'}偏好${preferenceStrength('J','P')}`
+            ];
+            return `你的四个维度偏好分别呈现为：${parts.join('、')}。`;
+        }
+
+        function buildBlindSpotText(mbti, data) {
+            const lines = [];
+            if (scores.T >= scores.F) lines.push('你在追求效率和正确时，容易让别人先感受到压力，再感受到你的好意。');
+            else lines.push('你在照顾关系和感受时，容易替别人承担太多，最后让自己默默消耗。');
+            if (scores.J >= scores.P) lines.push('当事情迟迟没有定论时，你可能会因为想尽快收口而显得急。');
+            else lines.push('当外部要求你马上定版时，你可能会因为还想保留空间而显得不够干脆。');
+            if (scores.E >= scores.I) lines.push('别人有时会以为你很轻松，其实你只是习惯先把场子撑住。');
+            else lines.push('别人有时会以为你冷淡，其实你只是需要时间确认自己是否愿意真正靠近。');
+            return lines.join(' ');
+        }
+
+        function buildRelationText(mbti, data) {
+            const trust = scores.F >= scores.T ? '你建立信任通常靠情绪上的在场感，让人感觉被理解、被接住。' : '你建立信任通常靠稳定和可靠，让人知道关键时刻你是站得住的。';
+            const express = scores.E >= scores.I ? '你比较容易通过互动、回应和参与感表达在意。' : '你更可能通过投入时间、记住细节和持续在场表达在意。';
+            const friction = scores.J >= scores.P ? '你容易和节奏过于散的人卡住，因为你会本能地想把事情推进到更明确。' : '你容易和控制感很强的人卡住，因为你需要一定弹性来维持舒展感。';
+            return `${trust} ${express} ${friction}`;
+        }
+
+        function buildWorkText(mbti, data) {
+            const env = scores.N >= scores.S ? '你更适合有方向感、有创造空间、允许你理解全局的环境。' : '你更适合标准清晰、执行明确、能看见实际成果的环境。';
+            const stress = scores.T >= scores.F ? '在压力下，你会优先守住效率和判断，但也要注意别把自己推得过硬。' : '在压力下，你会优先守住关系和氛围，但也要注意别为了照顾别人而忽略自己。';
+            const risk = scores.P >= scores.J ? '你最容易失衡的点，是想保留灵活，最后让推进节奏被拖慢。' : '你最容易失衡的点，是想把事情尽快做对，最后对自己和别人都过于紧。';
+            return `${env} ${stress} ${risk}`;
+        }
+
+        function buildGrowthActions(mbti, data) {
+            const actions = [];
+            actions.push(scores.E >= scores.I ? '重要表达前，先给自己 30 秒整理核心句，别只靠现场感觉。' : '在关键场景里，别等完全想透再说，先把第一层意思表达出来。');
+            actions.push(scores.N >= scores.S ? '做大判断时，补一个“现实细节清单”，把想法落到执行条件上。' : '做稳妥判断后，追问自己一次“还有没有别的可能性”。');
+            actions.push(scores.T >= scores.F ? '在指出问题前，先补一句对人的理解，效果会好很多。' : '在照顾别人之前，先确认这是不是你必须承担的责任。');
+            actions.push(scores.J >= scores.P ? '给自己留 10% 的可调整空间，别把计划做成僵硬承诺。' : '给重要任务设一个最晚定版点，避免一直开放到错过时机。');
+            return actions;
+        }
+
         function drawRadarChart(canvas, scores) {
             const dpr = window.devicePixelRatio || 1;
             const size = 320;
@@ -1878,10 +1972,10 @@
             const radius = 110;
 
             const dimensions = [
-                { label: '外向', value: scores.E, max: 3, color: '#F59E0B' },
-                { label: '直觉', value: scores.N, max: 3, color: '#10B981' },
-                { label: '思考', value: scores.T, max: 3, color: '#3B82F6' },
-                { label: '判断', value: scores.J, max: 3, color: '#EC4899' }
+                { label: '外向', value: scores.E, max: 16, color: '#F59E0B' },
+                { label: '直觉', value: scores.N, max: 16, color: '#10B981' },
+                { label: '思考', value: scores.T, max: 16, color: '#3B82F6' },
+                { label: '判断', value: scores.J, max: 16, color: '#EC4899' }
             ];
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1989,14 +2083,20 @@
             const tfRatio = dominantRatio('T', 'F');
             const jpRatio = dominantRatio('J', 'P');
 
+            const dominantSummary = buildDominantSummary();
+            const blindSpotText = buildBlindSpotText(mbti, data);
+            const relationText = buildRelationText(mbti, data);
+            const workText = buildWorkText(mbti, data);
+            const growthActions = buildGrowthActions(mbti, data);
+
             document.getElementById('reportContent').innerHTML = `
                 <div class="section-card">
                     <div class="section-header">
                         <div class="section-icon lightbulb">💡</div>
-                        <h3 class="section-title">画像速写</h3>
+                        <h3 class="section-title">首页结论</h3>
                     </div>
                     <div class="section-content">
-                        <p>你是${data.name}人格类型。${data.traits.slice(0, 2).join('、')}是你最显著的第一印象，而你也会在行动中逐渐展现${data.traits.slice(2, 4).join('、')}的气质。</p>
+                        <p>你这次测出的结果是 <strong>${mbti}</strong>，对应的核心气质是 ${data.name}。这不是一句标签，而是一种稳定的偏好组合。${dominantSummary}</p>
                         <div class="narrative-list">
                             ${narrative.map((line, i) => `<div class="narrative-item"><span>0${i + 1}</span>${line}</div>`).join('')}
                         </div>
@@ -2005,67 +2105,76 @@
                 <div class="section-card">
                     <div class="section-header">
                         <div class="section-icon briefcase">🧭</div>
-                        <h3 class="section-title">偏好结构</h3>
+                        <h3 class="section-title">偏好强度</h3>
                     </div>
                     <div class="section-content">
                         <div class="insight-grid">
                             ${buildPreferenceInsight(ei, `${ei} ${eiRatio}%`, preferenceStrength('E','I'), [
-                                ei === '外向' ? '擅长把能量带入团队，现场推动事情发生。' : '擅长深度思考，适合做高质量的判断与总结。',
-                                ei === '外向' ? '容易在交流中找到灵感。' : '更容易在独处时形成体系化观点。'
+                                ei === '外向' ? '你倾向在交流中获得能量，很多想法是在互动中成形的。' : '你倾向在安静中整理自己，先想透再表达会更舒服。',
+                                ei === '外向' ? '越有现场感，你越容易被带动起来。' : '越有独立空间，你越容易稳定输出。'
                             ])}
                             ${buildPreferenceInsight(sn, `${sn} ${snRatio}%`, preferenceStrength('S','N'), [
-                                sn === '感觉' ? '倾向从事实和经验出发，讲求可落地。' : '倾向从趋势和可能性出发，强调方向感。',
-                                sn === '感觉' ? '注重细节与执行质量。' : '注重模式与创新跃迁。'
+                                sn === '感觉' ? '你更容易信任事实、经验和看得见的依据。' : '你更容易被趋势、模式和可能性吸引。',
+                                sn === '感觉' ? '做事时会自然回到现实细节。' : '做事时会自然拉到更大的图景里。'
                             ])}
                             ${buildPreferenceInsight(tf, `${tf} ${tfRatio}%`, preferenceStrength('T','F'), [
-                                tf === '思考' ? '会优先考虑规则与效率。' : '会优先考虑关系与感受。',
-                                tf === '思考' ? '擅长冷静拆解问题。' : '擅长共情与激励。'
+                                tf === '思考' ? '你评估事情时会先看逻辑、标准和效率。' : '你评估事情时会先看关系、感受和影响。',
+                                tf === '思考' ? '你更在意事情是否讲得通。' : '你更在意人是否被妥善对待。'
                             ])}
                             ${buildPreferenceInsight(jp, `${jp} ${jpRatio}%`, preferenceStrength('J','P'), [
-                                jp === '判断' ? '更喜欢有计划、明确的推进节奏。' : '更喜欢保持弹性、在变化中优化。',
-                                jp === '判断' ? '容易在截止期前形成冲刺。' : '容易在过程中不断修正方向。'
+                                jp === '判断' ? '你偏好把事情尽快收口，明确会带来安全感。' : '你偏好保留空间，灵活调整会让你更自在。',
+                                jp === '判断' ? '确定感会显著提升你的效率。' : '开放感会显著提升你的状态。'
                             ])}
                         </div>
                     </div>
                 </div>
                 <div class="section-card">
                     <div class="section-header">
-                        <div class="section-icon briefcase">💼</div>
-                        <h3 class="section-title">职业发展</h3>
+                        <div class="section-icon briefcase">🎯</div>
+                        <h3 class="section-title">你的优势</h3>
                     </div>
                     <div class="section-content">
-                        <ul>${data.career.map(c => `<li>${c}</li>`).join('')}</ul>
-                        <p>${buildDetailText('职业发展', data.career)}</p>
+                        <ul>${data.strengths.map(c => `<li>${c}</li>`).join('')}</ul>
+                        <p>${buildDetailText('职业发展', data.strengths)}</p>
+                    </div>
+                </div>
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon heart">🪞</div>
+                        <h3 class="section-title">容易被误解的地方</h3>
+                    </div>
+                    <div class="section-content">
+                        <p>${blindSpotText}</p>
                     </div>
                 </div>
                 <div class="section-card">
                     <div class="section-header">
                         <div class="section-icon heart">💕</div>
-                        <h3 class="section-title">人际关系</h3>
+                        <h3 class="section-title">关系中的你</h3>
                     </div>
                     <div class="section-content">
                         <ul>${data.relationships.map(r => `<li>${r}</li>`).join('')}</ul>
-                        <p>${buildDetailText('人际关系', data.relationships)}</p>
+                        <p>${relationText}</p>
+                    </div>
+                </div>
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon rocket">💼</div>
+                        <h3 class="section-title">工作中的你</h3>
+                    </div>
+                    <div class="section-content">
+                        <ul>${data.career.map(g => `<li>${g}</li>`).join('')}</ul>
+                        <p>${workText}</p>
                     </div>
                 </div>
                 <div class="section-card">
                     <div class="section-header">
                         <div class="section-icon rocket">🚀</div>
-                        <h3 class="section-title">成长建议</h3>
+                        <h3 class="section-title">成长提醒</h3>
                     </div>
                     <div class="section-content">
-                        <ul>${data.growth.map(g => `<li>${g}</li>`).join('')}</ul>
-                        <p>${buildDetailText('成长建议', data.growth)}</p>
-                    </div>
-                </div>
-                <div class="section-card">
-                    <div class="section-header">
-                        <div class="section-icon rocket">🧩</div>
-                        <h3 class="section-title">质性补充</h3>
-                    </div>
-                    <div class="section-content">
-                        <p>当你状态很好时，你会把${data.traits.slice(0, 3).join('、')}结合起来，形成高效的行动闭环；当压力升高时，可能会过度放大“${data.growth[0]}”这类短板。</p>
-                        <p>建议给自己设置一个微型练习：在重要决策前，先用 2 分钟写下“我忽略了什么”，再继续推进，这会让你的优势更稳、更有持续性。</p>
+                        <ul>${growthActions.map(g => `<li>${g}</li>`).join('')}</ul>
+                        <p>真正的成长不是把自己改成另一种人，而是在保留天赋的同时，补上最容易让你付出代价的那一块。</p>
                     </div>
                 </div>
             `;
