@@ -583,6 +583,62 @@
             animation: scaleIn 0.5s ease-out;
         }
 
+        .review-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(180deg, #0F0A1F 0%, #1a1033 100%);
+        }
+
+        .review-content {
+            max-width: 420px;
+            width: 100%;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        .review-icon {
+            font-size: 60px;
+            margin-bottom: 22px;
+        }
+
+        .review-title {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .review-subtitle {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+        }
+
+        .generate-report-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-pink) 100%);
+            border: none;
+            color: white;
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 12px 40px rgba(124, 58, 237, 0.35);
+        }
+
+        .generate-report-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .review-helper {
+            margin-top: 14px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
         .loading-icon {
             font-size: 64px;
             margin-bottom: 24px;
@@ -1108,12 +1164,23 @@
         </div>
     </div>
 
+    <!-- Review Screen -->
+    <div class="screen review-screen" id="reviewScreen">
+        <div class="review-content">
+            <div class="review-icon">✨</div>
+            <h2 class="review-title">已完成测评</h2>
+            <p class="review-subtitle">点击下方按钮，生成你的专属人格报告。生成过程中会同步保存本次测评结果。</p>
+            <button class="generate-report-btn" id="generateReportBtn" onclick="generateFinalReport()">生成我的报告</button>
+            <div class="review-helper">如果生成失败，页面会直接提示你重试。</div>
+        </div>
+    </div>
+
     <!-- Loading Screen -->
     <div class="screen loading-screen" id="loadingScreen">
         <div class="loading-content">
             <div class="loading-icon">🔮</div>
-            <h2 class="loading-title">正在分析你的性格...</h2>
-            <p class="loading-subtitle">生成专属报告</p>
+            <h2 class="loading-title">正在生成你的报告...</h2>
+            <p class="loading-subtitle">正在同步测评结果并生成专属报告</p>
             <div class="loading-bar">
                 <div class="loading-bar-fill"></div>
             </div>
@@ -1418,6 +1485,7 @@
         const CODE_PATTERN = /^MBTI-[A-F0-9]{12}$/i;
         let accessToken = null;
         let isGeneratingImage = false;
+        let isGeneratingReport = false;
 
         // ============ FUNCTIONS ============
         function setActiveScreen(screenId) {
@@ -1657,7 +1725,7 @@
                     renderQuestion();
                     renderProgressDots();
                 } else {
-                    showLoading();
+                    showReviewScreen();
                 }
             }, 400);
         }
@@ -1686,12 +1754,44 @@
             renderProgressDots();
         }
 
+        function showReviewScreen() {
+            setActiveScreen('reviewScreen');
+            const btn = document.getElementById('generateReportBtn');
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = '生成我的报告';
+            }
+        }
+
         function showLoading() {
             setActiveScreen('loadingScreen');
+        }
 
-            setTimeout(() => {
-                showReport();
-            }, 2500);
+        async function generateFinalReport() {
+            if (isGeneratingReport) return;
+            isGeneratingReport = true;
+            const btn = document.getElementById('generateReportBtn');
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = '正在生成报告...';
+            }
+            try {
+                showLoading();
+                const mbti = calculateMBTI();
+                await submitResult(mbti);
+                setTimeout(() => {
+                    showReport();
+                    isGeneratingReport = false;
+                }, 1200);
+            } catch (error) {
+                isGeneratingReport = false;
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = '重新生成报告';
+                }
+                setActiveScreen('reviewScreen');
+                alert(`生成失败：${error.message || error}`);
+            }
         }
 
         function calculateMBTI() {
@@ -1983,30 +2083,25 @@
             if (!RESULT_URL || !accessToken) return;
             const key = `result_sent_${accessToken}`;
             if (sessionStorage.getItem(key)) return;
-            try {
-                const response = await fetch(RESULT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        code: accessToken,
-                        quiz_id: QUIZ_ID,
-                        mbti,
-                        scores,
-                        source: 'pages',
-                        channel: getChannel()
-                    })
-                });
-                const data = await response.json();
-                console.log('submit-result response:', data);
-                if (!response.ok || !data || !data.ok) {
-                    throw new Error(data && data.message ? data.message : '结果提交失败');
-                }
-                sessionStorage.setItem(key, '1');
-                console.log('submit-result success');
-            } catch (error) {
-                console.error('submit-result failed:', error);
-                alert(`报告已生成，但结果同步失败：${error.message || error}`);
+            const response = await fetch(RESULT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: accessToken,
+                    quiz_id: QUIZ_ID,
+                    mbti,
+                    scores,
+                    source: 'pages',
+                    channel: getChannel()
+                })
+            });
+            const data = await response.json();
+            console.log('submit-result response:', data);
+            if (!response.ok || !data || !data.ok) {
+                throw new Error(data && data.message ? data.message : '结果提交失败');
             }
+            sessionStorage.setItem(key, '1');
+            console.log('submit-result success');
         }
 
         function shareToWechat() {
@@ -2090,6 +2185,7 @@
             answers = new Array(questions.length).fill(null);
             selectedOption = null;
             isGeneratingImage = false;
+            isGeneratingReport = false;
             setActiveScreen('questionScreen');
             renderQuestion();
             renderProgressDots();
