@@ -1408,8 +1408,8 @@
         let selectedOption = null;
         let answers = [];
         let nextTimer = null;
-        const VERIFY_CODE_URL = '';
-        const RESULT_URL = '';
+        const VERIFY_CODE_URL = 'https://api.psycike.top/api/verify-code';
+        const RESULT_URL = 'https://api.psycike.top/api/submit-result';
         const DEMO_CODES = [];
         const QUIZ_ID = 'mbti';
         const DEFAULT_CHANNEL = 'xhs';
@@ -1992,7 +1992,8 @@
                         quiz_id: QUIZ_ID,
                         mbti,
                         scores,
-                        source: 'pages'
+                        source: 'pages',
+                        channel: getChannel()
                     })
                 });
                 sessionStorage.setItem(key, '1');
