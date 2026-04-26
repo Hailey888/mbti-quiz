@@ -3,85 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MBTI 性格测试 | 发现你的真实人格</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>MBTI 性格测试 | 3分钟解锁你的性格密码</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
-        :root {
-            --primary: #6366f1;
-            --primary-light: #818cf8;
-            --primary-dark: #4f46e5;
-            --bg-start: #f8fafc;
-            --bg-end: #e0e7ff;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --text-light: #94a3b8;
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --shadow: 0 4px 24px rgba(99, 102, 241, 0.1);
-            --shadow-lg: 0 8px 40px rgba(99, 102, 241, 0.15);
-            
-            /* Dimension colors */
-            --ei-color: #f59e0b;
-            --sn-color: #10b981;
-            --tf-color: #3b82f6;
-            --jp-color: #8b5cf6;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #7C3AED;
+            --primary-light: #A78BFA;
+            --primary-dark: #5B21B6;
+            --accent-pink: #EC4899;
+            --accent-blue: #3B82F6;
+            --accent-green: #10B981;
+            --accent-orange: #F59E0B;
+            --bg-dark: #0F0A1F;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
         }
 
         body {
             font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
-            min-height: 100vh;
+            background: var(--bg-dark);
             color: var(--text-primary);
-            line-height: 1.6;
+            min-height: 100vh;
             overflow-x: hidden;
         }
 
-        .container {
-            max-width: 520px;
-            margin: 0 auto;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        body.is-capturing {
+            cursor: progress;
         }
 
-        /* Screen transitions */
-        .screen {
-            display: none;
-            flex-direction: column;
-            flex: 1;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .screen.active {
-            display: flex;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
+        /* Animations */
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
+            0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
         }
 
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         @keyframes slideUp {
@@ -89,2012 +57,2060 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes drawRadar {
-            from { stroke-dashoffset: 1000; }
-            to { stroke-dashoffset: 0; }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        /* Start Screen */
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @keyframes progressGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(124, 58, 237, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(124, 58, 237, 0.6); }
+        }
+
+        /* Screen Base */
+        .screen {
+            display: none;
+            min-height: 100svh;
+            padding: 24px 20px 32px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            opacity: 1;
+        }
+
+        /* ========== START SCREEN ========== */
         .start-screen {
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 40px 20px;
-        }
-
-        .logo-area {
-            margin-bottom: 40px;
-        }
-
-        .logo-icon {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 24px;
-            box-shadow: var(--shadow-lg);
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .logo-icon svg {
-            width: 50px;
-            height: 50px;
-            fill: white;
-        }
-
-        .start-screen h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .start-screen .subtitle {
-            font-size: 16px;
-            color: var(--text-secondary);
-            margin-bottom: 40px;
-        }
-
-        .start-info {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 32px;
-            box-shadow: var(--shadow);
-            width: 100%;
-        }
-
-        .start-info-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
-        }
-
-        .start-info-item:last-child {
-            border-bottom: none;
-        }
-
-        .start-info-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .start-info-icon svg {
-            width: 20px;
-            height: 20px;
-            fill: white;
-        }
-
-        .start-info-text {
-            text-align: left;
-        }
-
-        .start-info-text strong {
-            display: block;
-            font-size: 14px;
-            color: var(--text-primary);
-        }
-
-        .start-info-text span {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 16px 32px;
-            font-size: 16px;
-            font-weight: 600;
-            color: white;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
-            font-family: inherit;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        /* Question Screen */
-        .question-screen {
-            padding: 20px 0;
-        }
-
-        .progress-area {
-            margin-bottom: 20px;
-        }
-
-        .progress-text {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .progress-label {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        .progress-count {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .progress-bar {
-            height: 6px;
-            background: rgba(99, 102, 241, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary-light) 100%);
-            border-radius: 3px;
-            transition: width 0.4s ease;
-        }
-
-        .question-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 32px 24px;
-            box-shadow: var(--shadow);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .question-dimension {
-            font-size: 12px;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 16px;
-            font-weight: 500;
-        }
-
-        .question-text {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 32px;
-            line-height: 1.5;
-        }
-
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            flex: 1;
-            justify-content: center;
-        }
-
-        .option {
-            padding: 16px 20px;
-            background: white;
-            border: 2px solid rgba(99, 102, 241, 0.1);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .option:hover {
-            border-color: var(--primary-light);
-            background: rgba(99, 102, 241, 0.03);
-        }
-
-        .option.selected {
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.08);
-        }
-
-        .option-indicator {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid rgba(99, 102, 241, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.3s ease;
-        }
-
-        .option.selected .option-indicator {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .option.selected .option-indicator::after {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-        }
-
-        .option-text {
-            font-size: 15px;
-            color: var(--text-primary);
-        }
-
-        /* Loading Screen */
-        .loading-screen {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-
-        .loading-animation {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 32px;
-            position: relative;
-        }
-
-        .loading-circle {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            border-top-color: var(--primary);
-            animation: spin 1.2s linear infinite;
-        }
-
-        .loading-circle:nth-child(2) {
-            width: 80%;
-            height: 80%;
-            top: 10%;
-            left: 10%;
-            border-top-color: var(--primary-light);
-            animation-delay: 0.15s;
-            animation-direction: reverse;
-        }
-
-        .loading-circle:nth-child(3) {
-            width: 60%;
-            height: 60%;
-            top: 20%;
-            left: 20%;
-            border-top-color: var(--primary-dark);
-            animation-delay: 0.3s;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            font-size: 16px;
-            color: var(--text-secondary);
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        /* Payment Screen */
-        .payment-screen {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        .payment-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 40px 24px;
-            box-shadow: var(--shadow);
-            width: 100%;
-            max-width: 360px;
-        }
-
-        .payment-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 24px;
-        }
-
-        .payment-icon svg {
-            width: 40px;
-            height: 40px;
-            fill: white;
-        }
-
-        .payment-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-        }
-
-        .payment-desc {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 24px;
-        }
-
-        .payment-price {
-            font-size: 36px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 24px;
-        }
-
-        .payment-price span {
-            font-size: 18px;
-            font-weight: 400;
-        }
-
-        .payment-features {
-            text-align: left;
-            margin-bottom: 32px;
-        }
-
-        .payment-feature {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        .payment-feature svg {
-            width: 20px;
-            height: 20px;
-            fill: var(--primary);
-            flex-shrink: 0;
-        }
-
-        .btn-pay {
-            width: 100%;
-            padding: 16px;
-            font-size: 16px;
-            font-weight: 600;
-            color: white;
-            background: linear-gradient(135deg, #07c160 0%, #10b981 100%);
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: inherit;
-            margin-bottom: 16px;
-        }
-
-        .btn-pay:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(7, 193, 96, 0.3);
-        }
-
-        .payment-note {
-            font-size: 12px;
-            color: var(--text-light);
-        }
-
-        /* ==================== */
-        /* REPORT SCREEN - NEW  */
-        /* ==================== */
-        
-        .report-screen {
-            padding: 0 0 40px 0;
-        }
-
-        /* Report Hero Section */
-        .report-hero {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            padding: 40px 24px 60px;
-            text-align: center;
+            background: linear-gradient(135deg, #0F0A1F 0%, #1a1033 50%, #0F0A1F 100%);
             position: relative;
             overflow: hidden;
+            z-index: 1;
+            padding-top: 56px;
+            padding-bottom: 56px;
+            min-height: auto;
         }
 
-        .report-hero::before {
+        .start-screen::before {
             content: '';
             position: absolute;
             top: -50%;
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
-            animation: float 6s ease-in-out infinite;
+            background: radial-gradient(circle at 30% 30%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 70%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+            animation: float 8s ease-in-out infinite;
+            pointer-events: none;
         }
 
-        .report-badge {
-            display: inline-block;
-            padding: 6px 16px;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            font-size: 12px;
-            font-weight: 500;
-            border-radius: 20px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
+        .start-content {
+            position: relative;
+            z-index: 1;
+            max-width: 420px;
+            width: 100%;
+            animation: scaleIn 0.8s ease-out;
         }
 
-        .report-type-large {
-            font-size: 64px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 8px;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            animation: scaleIn 0.6s ease-out;
+        @media (max-width: 480px) {
+            .start-screen {
+                padding-top: 40px;
+                padding-bottom: 40px;
+            }
         }
 
-        .report-name-large {
-            font-size: 28px;
-            font-weight: 600;
-            color: rgba(255,255,255,0.95);
+        .start-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(124, 58, 237, 0.2);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 13px;
+            color: var(--primary-light);
+            margin-bottom: 24px;
+        }
+
+        .start-badge span {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .start-title {
+            font-size: 42px;
+            font-weight: 900;
+            line-height: 1.2;
             margin-bottom: 16px;
-            animation: slideUp 0.6s ease-out 0.1s both;
+            background: linear-gradient(135deg, #FFFFFF 0%, #A78BFA 50%, #EC4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .report-slogan {
-            font-size: 15px;
-            color: rgba(255,255,255,0.85);
-            font-style: italic;
-            animation: slideUp 0.6s ease-out 0.2s both;
+        .start-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            line-height: 1.6;
         }
 
-        /* Dimension Tags */
-        .dimension-tags {
+        .start-features {
             display: flex;
             justify-content: center;
-            gap: 8px;
-            margin-top: 24px;
             flex-wrap: wrap;
-            animation: slideUp 0.6s ease-out 0.3s both;
+            gap: 12px 18px;
+            margin-bottom: 28px;
         }
 
-        .dimension-tag {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 500;
-            color: white;
+        .feature-item {
             display: flex;
             align-items: center;
             gap: 6px;
+            font-size: 14px;
+            color: var(--text-muted);
         }
 
-        .dimension-tag.ei { background: var(--ei-color); }
-        .dimension-tag.sn { background: var(--sn-color); }
-        .dimension-tag.tf { background: var(--tf-color); }
-        .dimension-tag.jp { background: var(--jp-color); }
+        .feature-item svg {
+            width: 16px;
+            height: 16px;
+            color: var(--accent-green);
+        }
 
-        /* Personality Icon */
-        .personality-icon {
-            width: 100px;
-            height: 100px;
-            background: rgba(255,255,255,0.95);
-            border-radius: 24px;
+        @media (max-width: 600px) {
+            .start-features {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .access-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            text-align: left;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .value-preview {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .value-preview-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .value-preview-list {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .value-preview-item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .value-preview-item span {
+            color: var(--primary-light);
+            font-weight: 700;
+            min-width: 20px;
+        }
+
+        .who-for {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .who-for-tag {
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .disclaimer-text {
+            margin-top: 12px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        .access-helper {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .access-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .access-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+        }
+
+        .access-input {
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(15, 10, 31, 0.8);
+            color: var(--text-primary);
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .access-input:focus {
+            border-color: rgba(124, 58, 237, 0.6);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+        }
+
+        .access-status {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .access-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .verify-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-pink) 100%);
+            border: none;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.4);
+        }
+
+        .verify-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* ========== QUESTION SCREEN ========== */
+        .question-screen {
+            background: linear-gradient(180deg, #0F0A1F 0%, #1a1033 100%);
+            padding-top: env(safe-area-inset-top, 20px);
+            padding-bottom: 32px;
+            min-height: auto;
+        }
+
+        .question-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 12px;
+        }
+
+        .progress-container {
+            flex: 1;
+            margin: 0;
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.completed {
+            background: var(--primary);
+            box-shadow: 0 0 8px var(--primary);
+        }
+
+        .progress-dot.current {
+            background: var(--accent-pink);
+            width: 24px;
+            border-radius: 4px;
+            box-shadow: 0 0 12px var(--accent-pink);
+        }
+
+        .progress-bar-bg {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent-pink));
+            border-radius: 2px;
+            transition: width 0.5s ease;
+            animation: progressGlow 2s ease-in-out infinite;
+        }
+
+        .question-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .question-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .question-number {
+            font-size: 13px;
+            color: var(--primary-light);
+            font-weight: 600;
+        }
+
+        .dimension-tag {
+            font-size: 11px;
+            padding: 4px 10px;
+            background: rgba(124, 58, 237, 0.2);
+            border-radius: 20px;
+            color: var(--text-secondary);
+        }
+
+        .question-text {
+            font-size: 22px;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .question-emoji {
+            font-size: 48px;
+            margin-bottom: 24px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .question-footer {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 18px;
+        }
+
+        .question-prev {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: var(--text-muted);
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .question-prev:hover {
+            color: var(--text-secondary);
+            border-color: rgba(124, 58, 237, 0.4);
+        }
+
+        @media (max-width: 480px) {
+            .question-text {
+                font-size: 18px;
+                margin-bottom: 18px;
+            }
+
+            .question-emoji {
+                font-size: 40px;
+                margin-bottom: 16px;
+            }
+
+            .option-card {
+                padding: 14px 16px;
+            }
+        }
+
+        .option-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-pink) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .option-card:hover {
+            border-color: rgba(124, 58, 237, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.2);
+        }
+
+        .option-card:hover .option-emoji {
+            transform: scale(1.1);
+        }
+
+        .option-card.selected {
+            border-color: var(--primary);
+            background: rgba(124, 58, 237, 0.15);
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+        }
+
+        .option-card.selected::before {
+            opacity: 0.05;
+        }
+
+        .option-emoji {
+            font-size: 28px;
+            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .option-text {
+            font-size: 16px;
+            color: var(--text-primary);
+            line-height: 1.5;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .option-check {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: -50px auto 24px;
-            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.3);
-            animation: scaleIn 0.6s ease-out 0.4s both;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
         }
 
-        .personality-icon .icon-emoji {
-            font-size: 48px;
+        .option-card.selected .option-check {
+            background: var(--primary);
+            border-color: var(--primary);
         }
 
-        /* Radar Chart Section */
-        .radar-section {
-            padding: 0 20px;
-            margin-bottom: 20px;
-            animation: slideUp 0.6s ease-out 0.5s both;
+        .option-check svg {
+            width: 14px;
+            height: 14px;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s ease;
         }
 
-        .radar-card {
-            background: var(--card-bg);
+        .option-card.selected .option-check svg {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* ========== LOADING SCREEN ========== */
+        .loading-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(180deg, #0F0A1F 0%, #1a1033 100%);
+        }
+
+        .loading-content {
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        .loading-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        .loading-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .loading-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .loading-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent-pink), var(--accent-blue));
+            background-size: 200% 100%;
+            animation: shimmer 1.5s linear infinite;
+        }
+
+        /* ========== REPORT SCREEN ========== */
+        .report-screen {
+            background: linear-gradient(180deg, #0F0A1F 0%, #1a1033 100%);
+            padding-bottom: 48px;
+            min-height: 0;
+        }
+
+        .report-hero {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(180deg, rgba(124, 58, 237, 0.15) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .report-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(124, 58, 237, 0.2);
+            padding: 6px 14px;
             border-radius: 20px;
-            padding: 24px;
-            box-shadow: var(--shadow);
+            font-size: 12px;
+            color: var(--primary-light);
+            margin-bottom: 20px;
+        }
+
+        .mbti-letters {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .mbti-letter {
+            width: 48px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 900;
+            border-radius: 12px;
+            animation: scaleIn 0.5s ease-out backwards;
+        }
+
+        .mbti-letter:nth-child(1) { background: linear-gradient(135deg, #F59E0B, #FBBF24); animation-delay: 0.1s; }
+        .mbti-letter:nth-child(2) { background: linear-gradient(135deg, #10B981, #34D399); animation-delay: 0.2s; }
+        .mbti-letter:nth-child(3) { background: linear-gradient(135deg, #3B82F6, #60A5FA); animation-delay: 0.3s; }
+        .mbti-letter:nth-child(4) { background: linear-gradient(135deg, #EC4899, #F472B6); animation-delay: 0.4s; }
+
+        .mbti-name {
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #FFFFFF, #A78BFA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .mbti-slogan {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .dimension-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .dim-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            animation: slideUp 0.5s ease-out backwards;
+        }
+
+        .dim-tag:nth-child(1) { background: rgba(245, 158, 11, 0.15); color: #FBBF24; animation-delay: 0.2s; }
+        .dim-tag:nth-child(2) { background: rgba(16, 185, 129, 0.15); color: #34D399; animation-delay: 0.3s; }
+        .dim-tag:nth-child(3) { background: rgba(59, 130, 246, 0.15); color: #60A5FA; animation-delay: 0.4s; }
+        .dim-tag:nth-child(4) { background: rgba(236, 72, 153, 0.15); color: #F472B6; animation-delay: 0.5s; }
+        .dim-tag {
+            background: rgba(255, 255, 255, 0.06) !important;
+            color: var(--text-secondary) !important;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .report-body {
+            display: grid;
+            gap: 20px;
+            padding: 20px;
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        .report-column {
+            display: grid;
+            gap: 18px;
+        }
+
+        .card-surface {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 22px;
+            padding: 22px;
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .radar-section {
+            animation: slideUp 0.6s ease-out 0.3s backwards;
         }
 
         .radar-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 700;
             margin-bottom: 20px;
             text-align: center;
         }
 
-        .radar-chart-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px 0;
-        }
-
-        .radar-chart {
-            width: 220px;
-            height: 220px;
-        }
-
-        /* Score Labels */
-        .score-labels {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-top: 20px;
-        }
-
-        .score-label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 14px;
-            background: rgba(99, 102, 241, 0.05);
-            border-radius: 12px;
-        }
-
-        .score-label .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-
-        .score-label .label-text {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        .score-label .label-value {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-left: auto;
-        }
-
-        /* Report Content Cards */
-        .report-content {
-            padding: 0 20px;
-        }
-
-        /* Tags Card */
-        .tags-card {
-            animation: slideUp 0.6s ease-out 0.6s both;
+        .radar-container {
+            max-width: 320px;
+            margin: 0 auto;
         }
 
         .personality-tags {
             display: flex;
             flex-wrap: wrap;
+            justify-content: center;
             gap: 8px;
+            margin-top: 20px;
         }
 
         .personality-tag {
             padding: 8px 16px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
+            background: rgba(124, 58, 237, 0.15);
+            border: 1px solid rgba(124, 58, 237, 0.3);
             border-radius: 20px;
             font-size: 13px;
-            font-weight: 500;
+            color: var(--primary-light);
         }
 
-        /* Section Card */
+        .report-section {
+            animation: slideUp 0.6s ease-out backwards;
+        }
+
+        .report-section:nth-child(1) { animation-delay: 0.35s; }
+        .report-section:nth-child(2) { animation-delay: 0.45s; }
+        .report-section:nth-child(3) { animation-delay: 0.55s; }
+        .report-section:nth-child(4) { animation-delay: 0.65s; }
+
         .section-card {
-            animation: slideUp 0.6s ease-out 0.7s both;
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
         }
 
         .section-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 16px;
-            font-size: 18px;
+            border-radius: 12px;
+            font-size: 20px;
         }
 
-        .section-icon.blue { background: rgba(59, 130, 246, 0.1); }
-        .section-icon.green { background: rgba(16, 185, 129, 0.1); }
-        .section-icon.purple { background: rgba(139, 92, 246, 0.1); }
-        .section-icon.orange { background: rgba(245, 158, 11, 0.1); }
+        .section-icon.lightbulb { background: rgba(245, 158, 11, 0.15); }
+        .section-icon.briefcase { background: rgba(59, 130, 246, 0.15); }
+        .section-icon.heart { background: rgba(236, 72, 153, 0.15); }
+        .section-icon.rocket { background: rgba(16, 185, 129, 0.15); }
 
         .section-title {
-            font-size: 17px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 16px;
+            font-size: 16px;
+            font-weight: 700;
         }
 
-        .section-quote {
-            background: rgba(99, 102, 241, 0.05);
-            border-left: 3px solid var(--primary);
-            padding: 16px;
-            border-radius: 0 12px 12px 0;
-            margin-bottom: 20px;
-        }
-
-        .section-quote p {
-            font-size: 14px;
-            color: var(--text-primary);
+        .section-content {
+            color: var(--text-secondary);
             line-height: 1.8;
-            font-style: italic;
+            font-size: 14px;
         }
 
-        .section-list {
+        .section-content p {
+            margin-top: 12px;
+            color: rgba(255, 255, 255, 0.68);
+        }
+
+        .section-content ul {
             list-style: none;
+            padding: 0;
         }
 
-        .section-list li {
+        .section-content li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 8px;
+        }
+
+        .section-content li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+        }
+
+        .insight-grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        @media (min-width: 700px) {
+            .insight-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .insight-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .insight-title {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .insight-text {
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+
+        .tone-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+
+        .narrative-list {
+            margin-top: 12px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .narrative-item {
             display: flex;
+            gap: 10px;
             align-items: flex-start;
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+
+        .narrative-item span {
+            color: var(--accent-pink);
+            font-weight: 700;
+        }
+
+        .share-section {
+            padding: 24px 20px;
+            text-align: center;
+            animation: slideUp 0.6s ease-out 0.7s backwards;
+            display: flex;
+            flex-direction: column;
             gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(99, 102, 241, 0.08);
+            align-items: center;
         }
 
-        .section-list li:last-child {
-            border-bottom: none;
+        .share-card {
+            width: min(640px, 100%);
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 18px 20px;
+            display: grid;
+            gap: 14px;
+            text-align: left;
         }
 
-        .section-list .list-bullet {
-            width: 22px;
-            height: 22px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            border-radius: 50%;
+        .share-card-header {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .share-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
-            font-size: 11px;
-            color: white;
-        }
-
-        .section-list .list-text {
-            font-size: 14px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* Share Card */
-        .share-card {
-            text-align: center;
-            animation: slideUp 0.6s ease-out 0.8s both;
-        }
-
-        .share-preview {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 20px;
-            color: white;
-        }
-
-        .share-preview-type {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .share-preview-name {
+            background: rgba(7, 193, 96, 0.18);
+            color: #07C160;
             font-size: 18px;
-            opacity: 0.9;
-            margin-bottom: 12px;
         }
 
-        .share-preview-slogan {
+        .share-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .share-desc {
             font-size: 13px;
-            opacity: 0.8;
-            font-style: italic;
+            color: var(--text-secondary);
         }
 
-        .btn-share {
-            width: 100%;
-            padding: 14px 24px;
-            font-size: 15px;
-            font-weight: 600;
+        .share-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #07C160 0%, #06AD56 100%);
             color: white;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             border: none;
-            border-radius: 12px;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-family: inherit;
-            display: flex;
+            box-shadow: 0 8px 30px rgba(7, 193, 96, 0.3);
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(7, 193, 96, 0.4);
+        }
+
+        .share-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .save-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            color: var(--text-primary);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .retest-btn {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .btn-share:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .btn-share svg {
-            width: 18px;
-            height: 18px;
-            fill: white;
-        }
-
-        .btn-retest {
-            background: none;
-            border: none;
-            color: var(--text-light);
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 14px 32px;
+            border-radius: 50px;
             font-size: 14px;
             cursor: pointer;
-            font-family: inherit;
-            padding: 10px 20px;
-        }
-
-        .btn-retest:hover {
-            color: var(--text-secondary);
-        }
-
-        /* Share Modal */
-        .share-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .share-modal.active {
-            display: flex;
-        }
-
-        .share-modal-content {
-            background: white;
-            border-radius: 20px;
-            padding: 24px;
-            max-width: 480px;
-            width: 100%;
-            animation: scaleIn 0.3s ease;
-        }
-
-        .share-modal-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 16px;
-            text-align: center;
-        }
-
-        .share-canvas-container {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-            display: flex;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        #shareCanvas {
-            border-radius: 8px;
-            max-width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .share-modal-tip {
-            font-size: 13px;
-            color: var(--text-light);
-            text-align: center;
-        }
-
-        .share-modal-close {
-            width: 100%;
-            padding: 12px;
+            transition: all 0.3s ease;
             margin-top: 16px;
-            background: var(--card-bg);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            border-radius: 10px;
-            font-size: 14px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-family: inherit;
         }
 
-        .share-modal-close:hover {
-            background: rgba(99, 102, 241, 0.05);
+        .retest-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary-light);
         }
 
-        /* Color themes for personality types */
-        .type-architect { --type-color: #5429a5; }
-        .type-logician { --type-color: #0891b2; }
-        .type-commander { --type-color: #c026d3; }
-        .type-debater { --type-color: #ea580c; }
-        .type-advocate { --type-color: #16a34a; }
-        .type-mediator { --type-color: #0d9488; }
-        .type-protagonist { --type-color: #dc2626; }
-        .type-campaigner { --type-color: #ca8a04; }
-        .type-logistician { --type-color: #1e40af; }
-        .type-defender { --type-color: #7c3aed; }
-        .type-executive { --type-color: #b45309; }
-        .type-consul { --type-color: #be185d; }
-        .type-virtuoso { --type-color: #475569; }
-        .type-adventurer { --type-color: #0f766e; }
-        .type-entrepreneur { --type-color: #ea580c; }
-        .type-entertainer { --type-color: #db2777; }
-
-        /* Utility */
-        .mb-12 { margin-bottom: 12px; }
-        .mb-16 { margin-bottom: 16px; }
-        .mb-20 { margin-bottom: 20px; }
+        /* Canvas for radar chart */
+        #radarCanvas {
+            width: 100%;
+            max-width: 300px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Start Screen -->
-        <div id="start-screen" class="screen start-screen active">
-            <div class="logo-area">
-                <div class="logo-icon">
-                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                </div>
-                <h1>MBTI 性格测试</h1>
-                <p class="subtitle">发现你的真实人格类型</p>
+    <!-- Start Screen -->
+    <div class="screen start-screen active" id="startScreen">
+        <div class="start-content">
+            <div class="start-badge">
+                <span>✨</span> 超过 100 万人测试过
             </div>
-
-            <div class="start-info">
-                <div class="start-info-item">
-                    <div class="start-info-icon">
-                        <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-                    </div>
-                    <div class="start-info-text">
-                        <strong>约 10 分钟</strong>
-                        <span>28道精心设计的选择题</span>
-                    </div>
+            <h1 class="start-title">MBTI<br>人格测试报告</h1>
+            <p class="start-subtitle">3分钟完成，生成一份适合自我了解和分享讨论的人格报告</p>
+            <div class="start-features">
+                <div class="feature-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+                    3分钟完成
                 </div>
-                <div class="start-info-item">
-                    <div class="start-info-icon">
-                        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    </div>
-                    <div class="start-info-text">
-                        <strong>16种人格类型</strong>
-                        <span>深度解析你的性格特点</span>
-                    </div>
+                <div class="feature-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+                    生成人格报告
                 </div>
-                <div class="start-info-item">
-                    <div class="start-info-icon">
-                        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-                    </div>
-                    <div class="start-info-text">
-                        <strong>社交货币</strong>
-                        <span>了解自己，也理解他人</span>
-                    </div>
+                <div class="feature-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+                    适合分享讨论
                 </div>
             </div>
-
-            <button class="btn-primary" onclick="startTest()">开始测试</button>
-        </div>
-
-        <!-- Question Screen -->
-        <div id="question-screen" class="screen question-screen">
-            <div class="progress-area">
-                <div class="progress-text">
-                    <span class="progress-label">答题进度</span>
-                    <span class="progress-count"><span id="current-q">1</span> / <span id="total-q">28</span></span>
+            <div class="value-preview">
+                <div class="value-preview-title">你将获得什么</div>
+                <div class="value-preview-list">
+                    <div class="value-preview-item"><span>01</span><div>4个维度的人格偏好判断，不只给你四个字母。</div></div>
+                    <div class="value-preview-item"><span>02</span><div>职业、人际、成长建议三块内容，方便快速看懂自己。</div></div>
+                    <div class="value-preview-item"><span>03</span><div>可生成长图，适合发给朋友或发朋友圈做话题讨论。</div></div>
                 </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill" style="width: 3.6%"></div>
+                <div class="who-for">
+                    <span class="who-for-tag">想更了解自己</span>
+                    <span class="who-for-tag">想找社交破冰话题</span>
+                    <span class="who-for-tag">想送朋友一个有内容的小测试</span>
                 </div>
+                <div class="disclaimer-text">本测评为轻量自我探索工具，适合娱乐参考与个性认知，不作为心理诊断依据。</div>
             </div>
-
-            <div class="question-card">
-                <div class="question-dimension" id="dimension-label">维度一：外向(E) - 内向(I)</div>
-                <div class="question-text" id="question-text">题目加载中...</div>
-
-                <div class="options" id="options-container">
-                    <!-- Options will be inserted here -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Payment Screen -->
-        <div id="payment-screen" class="screen payment-screen">
-            <div class="payment-card">
-                <div class="payment-icon">
-                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                </div>
-                <h2 class="payment-title">解锁完整报告</h2>
-                <p class="payment-desc">付款后即可查看你的专属MBTI性格分析报告</p>
-                <div class="payment-price">¥9.9<span>9</span></div>
-
-                <div class="payment-features">
-                    <div class="payment-feature">
-                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                        完整的性格类型分析
-                    </div>
-                    <div class="payment-feature">
-                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                        优势与劣势深度解读
-                    </div>
-                    <div class="payment-feature">
-                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                        人际关系与情感分析
-                    </div>
-                    <div class="payment-feature">
-                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                        职业发展建议
-                    </div>
-                    <div class="payment-feature">
-                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                        永久保存，可分享
-                    </div>
-                </div>
-
-                <button class="btn-pay" onclick="simulatePayment()">微信支付 ¥9.99</button>
-                <p class="payment-note">点击上方按钮完成付款（演示模式）</p>
-            </div>
-        </div>
-
-        <!-- Loading Screen -->
-        <div id="loading-screen" class="screen loading-screen">
-            <div class="loading-animation">
-                <div class="loading-circle"></div>
-                <div class="loading-circle"></div>
-                <div class="loading-circle"></div>
-            </div>
-            <p class="loading-text">正在分析你的性格...</p>
-        </div>
-
-        <!-- Report Screen - NEW DESIGN -->
-        <div id="report-screen" class="screen report-screen">
-            <!-- Hero Section -->
-            <div class="report-hero">
-                <div class="report-badge">你的MBTI性格类型</div>
-                <div class="report-type-large" id="report-type">INTJ</div>
-                <div class="report-name-large" id="report-name">建筑师</div>
-                <div class="report-slogan" id="report-slogan">"战略思维者，理性的梦想家"</div>
-                
-                <div class="dimension-tags" id="dimension-tags">
-                    <!-- Dimension tags will be inserted here -->
-                </div>
-            </div>
-
-            <!-- Personality Icon -->
-            <div class="personality-icon">
-                <span class="icon-emoji" id="personality-icon">🏛️</span>
-            </div>
-
-            <!-- Radar Chart Section -->
-            <div class="radar-section">
-                <div class="radar-card">
-                    <div class="radar-title">性格四维度分析</div>
-                    <div class="radar-chart-container">
-                        <canvas id="radarChart" class="radar-chart" width="220" height="220"></canvas>
-                    </div>
-                    <div class="score-labels" id="score-labels">
-                        <!-- Score labels will be inserted here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Report Content -->
-            <div class="report-content">
-                <!-- Personality Tags -->
-                <div class="report-card tags-card">
-                    <div class="section-title">🏷️ 人格标签</div>
-                    <div class="personality-tags" id="personality-tags">
-                        <!-- Tags will be inserted here -->
-                    </div>
-                </div>
-
-                <!-- Core Traits -->
-                <div class="report-card section-card">
-                    <div class="section-icon blue">💡</div>
-                    <div class="section-title">性格解析</div>
-                    <div class="section-quote">
-                        <p id="report-intro">你是一个理性而独立的思想者，拥有战略性的思维和坚定的内心。</p>
-                    </div>
-                    <ul class="section-list" id="report-traits">
-                        <!-- Traits will be inserted here -->
-                    </ul>
-                </div>
-
-                <!-- Career -->
-                <div class="report-card section-card">
-                    <div class="section-icon green">💼</div>
-                    <div class="section-title">职业发展</div>
-                    <ul class="section-list" id="report-career">
-                        <!-- Career suggestions will be inserted here -->
-                    </ul>
-                </div>
-
-                <!-- Relationships -->
-                <div class="report-card section-card">
-                    <div class="section-icon purple">💕</div>
-                    <div class="section-title">人际关系</div>
-                    <ul class="section-list" id="report-relationships">
-                        <!-- Relationships will be inserted here -->
-                    </ul>
-                </div>
-
-                <!-- Share Section -->
-                <div class="report-card share-card">
-                    <div class="share-preview" id="share-preview">
-                        <div class="share-preview-type" id="share-type">INTJ</div>
-                        <div class="share-preview-name" id="share-name">建筑师</div>
-                        <div class="share-preview-slogan" id="share-slogan">"战略思维者，理性的梦想家"</div>
-                    </div>
-                    <button class="btn-share" onclick="showShareModal()">
-                        <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
-                        生成分享图片
-                    </button>
-                    <button class="btn-retest" onclick="retest()">🔄 重新测试</button>
+            <div class="access-card">
+                <div class="access-title">输入专属测评码</div>
+                <div class="access-subtitle">购买后可从订单消息或客服发送的测评码中获取</div>
+                <input class="access-input" id="accessCodeInput" placeholder="请输入测评码，如 MBTI-XXXXXXXXXXXX">
+                <div class="access-status" id="accessStatus">请输入购买后获得的专属测评码</div>
+                <div class="access-helper">如测评码无效，请联系售后客服核对。</div>
+                <div class="access-actions">
+                    <button class="verify-btn" id="verifyBtn" onclick="verifyAndStart()">验证并开始测评</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Share Modal -->
-    <div class="share-modal" id="shareModal">
-        <div class="share-modal-content">
-            <div class="share-modal-title">📱 保存分享图片</div>
-            <div class="share-canvas-container">
-                <canvas id="shareCanvas" width="900" height="1200"></canvas>
+    <!-- Question Screen -->
+    <div class="screen question-screen" id="questionScreen">
+        <div class="question-header">
+            <div class="progress-container">
+                <div class="progress-dots" id="progressDots"></div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progressBar"></div>
+                </div>
             </div>
-            <p class="share-modal-tip">长按图片保存，或截图分享到社交媒体</p>
-            <button class="share-modal-close" onclick="hideShareModal()">关闭</button>
+        </div>
+        <div class="question-content">
+            <div class="question-emoji" id="questionEmoji">🤔</div>
+            <div class="question-meta">
+                <span class="question-number" id="questionNumber">问题 1/12</span>
+                <span class="dimension-tag" id="dimensionTag">外向 - 内向</span>
+            </div>
+            <h2 class="question-text" id="questionText">加载中...</h2>
+            <div class="options-container" id="optionsContainer"></div>
+            <div class="question-footer">
+                <button class="question-prev" id="prevButton" onclick="goPrevQuestion()">上一题</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div class="screen loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-icon">🔮</div>
+            <h2 class="loading-title">正在分析你的性格...</h2>
+            <p class="loading-subtitle">生成专属报告</p>
+            <div class="loading-bar">
+                <div class="loading-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Screen -->
+    <div class="screen report-screen" id="reportScreen">
+        <div class="report-hero">
+            <div class="report-badge">✨ 你的 MBTI 人格类型</div>
+            <div class="mbti-letters" id="mbtiLetters"></div>
+            <h1 class="mbti-name" id="mbtiName">INTJ</h1>
+            <p class="mbti-slogan" id="mbtiSlogan">"战略思维者，理性的梦想家"</p>
+            <div class="dimension-tags" id="dimensionTags"></div>
+        </div>
+
+        <div class="report-body">
+            <div class="report-column">
+                <div class="radar-section card-surface">
+                    <h3 class="radar-title">📊 四维度分析</h3>
+                    <div class="radar-container">
+                        <canvas id="radarCanvas" width="320" height="320"></canvas>
+                    </div>
+                    <div class="personality-tags" id="personalityTags"></div>
+                </div>
+            </div>
+            <div class="report-column">
+                <div class="report-section" id="reportContent"></div>
+            </div>
+        </div>
+
+        <div class="share-section">
+            <div class="share-card">
+                <div class="share-card-header">
+                    <div class="share-icon">🟢</div>
+                    <div>
+                        <div class="share-title">生成分享长图</div>
+                        <div class="share-desc">生成高清报告图，保存后可发到微信或朋友圈</div>
+                    </div>
+                </div>
+                <div class="share-actions">
+                    <button class="share-btn" onclick="shareToWechat()">
+                        生成长图
+                    </button>
+                    <button class="save-btn" onclick="saveReportImage()">保存到相册</button>
+                </div>
+                <div class="share-hint">生成后请保存图片，再到微信中选择图片发送</div>
+            </div>
+            <button class="retest-btn" onclick="retest()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+                重新测试
+            </button>
         </div>
     </div>
 
     <script>
-        // Questions data
+        // ============ QUESTION DATA ============
         const questions = [
-            // Dimension 1: EI (7 questions)
             {
-                dimension: "外向(E) - 内向(I)",
-                dimensionKey: "EI",
-                question: "在社交聚会上，你通常会：",
+                dimension: "EI",
+                dimensionName: "外向 - 内向",
+                emoji: "🌟",
+                text: "在聚会上，你通常会？",
                 options: [
-                    { text: "主动和陌生人聊天", value: "E" },
-                    { text: "只和认识的人交流", value: "I" }
+                    { text: "主动和陌生人聊天，感觉充满能量", value: "E", emoji: "🔥" },
+                    { text: "等待别人来接近我，需要时间充电", value: "I", emoji: "🌙" },
+                    { text: "和认识的朋友待在一起", value: "I", emoji: "👥" },
+                    { text: "观察人群，不急着互动", value: "I", emoji: "🔍" }
                 ]
             },
             {
-                dimension: "外向(E) - 内向(I)",
-                dimensionKey: "EI",
-                question: "当你有一个新想法时，你通常会：",
+                dimension: "EI",
+                dimensionName: "外向 - 内向",
+                emoji: "💭",
+                text: "当你独自一人时，你通常会？",
                 options: [
-                    { text: "立即和别人分享讨论", value: "E" },
-                    { text: "先自己思考成熟再说", value: "I" }
+                    { text: "很快感到无聊，想找人聊天", value: "E", emoji: "😣" },
+                    { text: "享受独处的时间，进行深度思考", value: "I", emoji: "✨" },
+                    { text: "做自己喜欢的事情，很充实", value: "I", emoji: "🎯" },
+                    { text: "有时候会感到孤独", value: "E", emoji: "😔" }
                 ]
             },
             {
-                dimension: "外向(E) - 内向(I)",
-                dimensionKey: "EI",
-                question: "在人群中，你更容易：",
+                dimension: "EI",
+                dimensionName: "外向 - 内向",
+                emoji: "🎤",
+                text: "在团队讨论中，你倾向于？",
                 options: [
-                    { text: "成为谈话的发起者", value: "E" },
-                    { text: "倾向于倾听多于发言", value: "I" }
+                    { text: "积极发言，分享自己的想法", value: "E", emoji: "🗣️" },
+                    { text: "先听别人说，再发表意见", value: "I", emoji: "👂" },
+                    { text: "只说必要的话", value: "I", emoji: "🤐" },
+                    { text: "视情况而定", value: "E", emoji: "⚖️" }
                 ]
             },
             {
-                dimension: "外向(E) - 内向(I)",
-                dimensionKey: "EI",
-                question: "你获得能量的方式是：",
+                dimension: "SN",
+                dimensionName: "直觉 - 感觉",
+                emoji: "🔮",
+                text: "你更关注事物的？",
                 options: [
-                    { text: "和他人互动交流", value: "E" },
-                    { text: "通过独处和内省", value: "I" }
+                    { text: "抽象的可能性和未来发展", value: "N", emoji: "🌈" },
+                    { text: "具体的事实和现实细节", value: "S", emoji: "📊" },
+                    { text: "当下的实际情况", value: "S", emoji: "🎯" },
+                    { text: "长远的影响和意义", value: "N", emoji: "🔭" }
                 ]
             },
             {
-                dimension: "外向(E) - 内向(I)",
-                dimensionKey: "EI",
-                question: "你更喜欢的工作环境是：",
+                dimension: "SN",
+                dimensionName: "直觉 - 感觉",
+                emoji: "📚",
+                text: "学习新东西时，你更喜欢？",
                 options: [
-                    { text: "开放、协作的办公室", value: "E" },
-                    { text: "安静、独立的工作空间", value: "I" }
+                    { text: "探索理论背后的原理", value: "N", emoji: "🧠" },
+                    { text: "结合实际案例来理解", value: "S", emoji: "💡" },
+                    { text: "按照教程步骤操作", value: "S", emoji: "📖" },
+                    { text: "自己摸索创新方法", value: "N", emoji: "🚀" }
                 ]
             },
             {
-                dimension: "外向(E) - 内向(I)",
-                dimensionKey: "EI",
-                question: "周末你更想：",
+                dimension: "SN",
+                dimensionName: "直觉 - 感觉",
+                emoji: "💡",
+                text: "描述「梦想」时，你更倾向于？",
                 options: [
-                    { text: "约朋友一起出去玩", value: "E" },
-                    { text: "在家安静地休息或读书", value: "I" }
+                    { text: "描述愿景和可能性", value: "N", emoji: "✨" },
+                    { text: "描述具体的目标和计划", value: "S", emoji: "📋" },
+                    { text: "谈论现实可行的规划", value: "S", emoji: "🎯" },
+                    { text: "两者结合", value: "N", emoji: "⚡" }
                 ]
             },
             {
-                dimension: "外向(E) - 内向(I)",
-                dimensionKey: "EI",
-                question: "当需要做决定时，你倾向于：",
+                dimension: "TF",
+                dimensionName: "思考 - 情感",
+                emoji: "⚖️",
+                text: "做决定时，你更看重？",
                 options: [
-                    { text: "和他人商量后决定", value: "E" },
-                    { text: "自己想清楚再决定", value: "I" }
-                ]
-            },
-
-            // Dimension 2: SN (7 questions)
-            {
-                dimension: "直觉(N) - 感觉(S)",
-                dimensionKey: "SN",
-                question: "你更关注：",
-                options: [
-                    { text: "未来的可能性和想象", value: "N" },
-                    { text: "当下的现实和具体细节", value: "S" }
+                    { text: "逻辑和客观分析", value: "T", emoji: "🔬" },
+                    { text: "对他人的影响和感受", value: "F", emoji: "❤️" },
+                    { text: "公平性和一致性", value: "T", emoji: "📏" },
+                    { text: "人际和谐", value: "F", emoji: "🤝" }
                 ]
             },
             {
-                dimension: "直觉(N) - 感觉(S)",
-                dimensionKey: "SN",
-                question: "你更容易被什么吸引？",
+                dimension: "TF",
+                dimensionName: "思考 - 情感",
+                emoji: "💬",
+                text: "当朋友向你倾诉烦恼时，你通常会？",
                 options: [
-                    { text: "新颖、抽象的概念和理论", value: "N" },
-                    { text: "具体、实用的事实和数据", value: "S" }
+                    { text: "分析问题，给出解决方案", value: "T", emoji: "🔧" },
+                    { text: "先给予情感支持和安慰", value: "F", emoji: "🤗" },
+                    { text: "分享类似经历", value: "F", emoji: "💭" },
+                    { text: "尽量理性客观地看待", value: "T", emoji: "⚖️" }
                 ]
             },
             {
-                dimension: "直觉(N) - 感觉(S)",
-                dimensionKey: "SN",
-                question: "当你学习新东西时，你喜欢：",
+                dimension: "TF",
+                dimensionName: "思考 - 情感",
+                emoji: "🎯",
+                text: "你认为自己更擅长？",
                 options: [
-                    { text: "先了解整体概念和原理", value: "N" },
-                    { text: "通过具体例子和实践来学习", value: "S" }
+                    { text: "分析利弊，做出最优解", value: "T", emoji: "📊" },
+                    { text: "理解他人需求，给予支持", value: "F", emoji: "💕" },
+                    { text: "平衡逻辑和情感", value: "T", emoji: "⚡" },
+                    { text: "照顾他人情绪", value: "F", emoji: "🌸" }
                 ]
             },
             {
-                dimension: "直觉(N) - 感觉(S)",
-                dimensionKey: "SN",
-                question: "你更相信：",
+                dimension: "JP",
+                dimensionName: "判断 - 知觉",
+                emoji: "📋",
+                text: "你更喜欢哪种工作方式？",
                 options: [
-                    { text: "自己的直觉和第六感", value: "N" },
-                    { text: "亲眼所见的事实", value: "S" }
+                    { text: "按计划进行，有明确截止日期", value: "J", emoji: "📅" },
+                    { text: "灵活应变，随机应变", value: "P", emoji: "🎪" },
+                    { text: "有框架但可以调整", value: "J", emoji: "🗂️" },
+                    { text: "跟随情况变化", value: "P", emoji: "🌊" }
                 ]
             },
             {
-                dimension: "直觉(N) - 感觉(S)",
-                dimensionKey: "SN",
-                question: "描述一件事时，你倾向于：",
+                dimension: "JP",
+                dimensionName: "判断 - 知觉",
+                emoji: "🏠",
+                text: "旅行时，你通常会？",
                 options: [
-                    { text: "使用比喻和象征", value: "N" },
-                    { text: "描述具体的事实和细节", value: "S" }
+                    { text: "提前规划好每一天的行程", value: "J", emoji: "🗺️" },
+                    { text: "走到哪算哪，随性而为", value: "P", emoji: "✨" },
+                    { text: "大致规划，保留弹性", value: "J", emoji: "📍" },
+                    { text: "享受意外发现的惊喜", value: "P", emoji: "🎁" }
                 ]
             },
             {
-                dimension: "直觉(N) - 感觉(S)",
-                dimensionKey: "SN",
-                question: "你更喜欢的工作内容是：",
+                dimension: "JP",
+                dimensionName: "判断 - 知觉",
+                emoji: "📝",
+                text: "面对 deadline 时，你通常是？",
                 options: [
-                    { text: "创新和解决复杂问题", value: "N" },
-                    { text: "执行明确的任务流程", value: "S" }
-                ]
-            },
-            {
-                dimension: "直觉(N) - 感觉(S)",
-                dimensionKey: "SN",
-                question: "面对变化时，你通常会：",
-                options: [
-                    { text: "兴奋地期待新的可能", value: "N" },
-                    { text: "谨慎地评估潜在风险", value: "S" }
-                ]
-            },
-
-            // Dimension 3: TF (7 questions)
-            {
-                dimension: "思考(T) - 情感(F)",
-                dimensionKey: "TF",
-                question: "做决定时，你更看重：",
-                options: [
-                    { text: "逻辑和客观分析", value: "T" },
-                    { text: "对他人的影响和感受", value: "F" }
-                ]
-            },
-            {
-                dimension: "思考(T) - 情感(F)",
-                dimensionKey: "TF",
-                question: "当你不同意别人的观点时，你会：",
-                options: [
-                    { text: "直接指出逻辑上的问题", value: "T" },
-                    { text: "考虑对方的感受，委婉表达", value: "F" }
-                ]
-            },
-            {
-                dimension: "思考(T) - 情感(F)",
-                dimensionKey: "TF",
-                question: "你觉得批判性思维最重要的是：",
-                options: [
-                    { text: "客观分析和逻辑推理", value: "T" },
-                    { text: "理解和支持他人", value: "F" }
-                ]
-            },
-            {
-                dimension: "思考(T) - 情感(F)",
-                dimensionKey: "TF",
-                question: "在争论中，你更倾向于：",
-                options: [
-                    { text: "用逻辑说服对方", value: "T" },
-                    { text: "试图理解对方的感受", value: "F" }
-                ]
-            },
-            {
-                dimension: "思考(T) - 情感(F)",
-                dimensionKey: "TF",
-                question: "你更愿意被称赞：",
-                options: [
-                    { text: "能力和智慧", value: "T" },
-                    { text: "善良和体贴", value: "F" }
-                ]
-            },
-            {
-                dimension: "思考(T) - 情感(F)",
-                dimensionKey: "TF",
-                question: "当你给别人建议时，你更关注：",
-                options: [
-                    { text: "解决方案是否有效", value: "T" },
-                    { text: "对方现在的情绪状态", value: "F" }
-                ]
-            },
-            {
-                dimension: "思考(T) - 情感(F)",
-                dimensionKey: "TF",
-                question: "你认为自己更：",
-                options: [
-                    { text: "理性冷静", value: "T" },
-                    { text: "重感情善解人意", value: "F" }
-                ]
-            },
-
-            // Dimension 4: JP (7 questions)
-            {
-                dimension: "判断(J) - 知觉(P)",
-                dimensionKey: "JP",
-                question: "你更喜欢：",
-                options: [
-                    { text: "有计划、有条理的生活", value: "J" },
-                    { text: "随性、灵活的生活方式", value: "P" }
-                ]
-            },
-            {
-                dimension: "判断(J) - 知觉(P)",
-                dimensionKey: "JP",
-                question: "当你做计划时，你通常会：",
-                options: [
-                    { text: "提前制定详细的计划", value: "J" },
-                    { text: "边做边看，灵活调整", value: "P" }
-                ]
-            },
-            {
-                dimension: "判断(J) - 知觉(P)",
-                dimensionKey: "JP",
-                question: "你更容易感到：",
-                options: [
-                    { text: "事情太多，时间不够", value: "J" },
-                    { text: "有趣的事情太多做不完", value: "P" }
-                ]
-            },
-            {
-                dimension: "判断(J) - 知觉(P)",
-                dimensionKey: "JP",
-                question: "在工作中，你更喜欢：",
-                options: [
-                    { text: "按部就班完成任务", value: "J" },
-                    { text: "有变化和新鲜感", value: "P" }
-                ]
-            },
-            {
-                dimension: "判断(J) - 知觉(P)",
-                dimensionKey: "JP",
-                question: "别人对你的第一印象可能是：",
-                options: [
-                    { text: "可靠、有组织", value: "J" },
-                    { text: "随和、有趣", value: "P" }
-                ]
-            },
-            {
-                dimension: "判断(J) - 知觉(P)",
-                dimensionKey: "JP",
-                question: "你更倾向于：",
-                options: [
-                    { text: "说到做到，有始有终", value: "J" },
-                    { text: "保持开放，接受变化", value: "P" }
-                ]
-            },
-            {
-                dimension: "判断(J) - 知觉(P)",
-                dimensionKey: "JP",
-                question: "面对最后期限时，你通常会：",
-                options: [
-                    { text: "提前完成，避免压力", value: "J" },
-                    { text: "在压力下效率更高", value: "P" }
+                    { text: "提前完成，避免压力", value: "J", emoji: "🏆" },
+                    { text: "最后时刻灵感爆发", value: "P", emoji: "⚡" },
+                    { text: "有计划地推进", value: "J", emoji: "📈" },
+                    { text: "视情况而定", value: "P", emoji: "🎯" }
                 ]
             }
         ];
 
-        // Personality type data with enhanced info
+        // ============ PERSONALITY DATA ============
         const personalityTypes = {
-            "INTJ": {
-                name: "建筑师",
-                category: "分析师",
-                slogan: "战略思维者，理性的梦想家",
-                intro: "你是一个理性而独立的思想者，拥有战略性的思维和坚定的内心。你善于制定长期计划，追求知识和理解是你的核心动力。",
-                traits: ["战略思维能力强，善于规划", "独立自主，不依赖他人", "追求知识和持续成长", "逻辑清晰，善于分析", "对自己的标准很高"],
-                career: ["适合需要战略眼光和独立思考的工作", "科学家、工程师、律师、医生", "喜欢能发挥专业能力的环境", "需要空间和时间来思考"],
-                relationships: ["倾向于和少数深入的人建立深厚友谊", "需要独处时间来充电", "表达感情含蓄但忠诚", "欣赏能够独立思考的伴侣"],
-                tags: ["战略家", "独立思考", "完美主义", "理性", "高标准"],
-                icon: "🏛️",
-                color: "#5429a5"
-            },
-            "INTP": {
-                name: "逻辑学家",
-                category: "分析师",
-                slogan: "思想的建筑师，逻辑的诗人",
-                intro: "你是一个充满好奇心和求知欲的思考者。你热爱探索知识的边界，追求理解和真理是你人生的核心动力。",
-                traits: ["极具好奇心和求知欲", "逻辑思维能力强", "善于发现patterns和联系", "独立思考，不盲从", "对抽象概念充满兴趣"],
-                career: ["适合研究、分析类工作", "哲学家、物理学家、数学家", "程序员、数据分析师、研究员", "需要智识刺激和自由环境"],
-                relationships: ["重视智力交流和思想碰撞", "有时会显得疏离但内心温暖", "需要理解和支持他们的思考时间", "选择一个能够对话的伴侣"],
-                tags: ["思想家", "逻辑强", "好奇心", "独立", "抽象思维"],
-                icon: "🔬",
-                color: "#0891b2"
-            },
-            "ENTJ": {
-                name: "指挥官",
-                category: "分析师",
-                slogan: "天生的领袖，果断的决策者",
-                intro: "你是一个天生的领导者，拥有非凡的洞察力和决策能力。你敢于挑战现状，追求卓越和成功是你的人生信条。",
-                traits: ["天生的领导者气质", "决策果断，善于组织", "自信且有影响力", "善于发现问题和机会", "追求效率和成果"],
-                career: ["适合管理和领导岗位", "企业家、高管、律师、法官", "适合快节奏、高压环境", "喜欢能够掌控和改变的环境"],
-                relationships: ["直接坦率，有时显得强势", "重视伴侣的能力和独立性", "愿意为关系投入时间和精力", "欣赏能够跟上节奏的伴侣"],
-                tags: ["领导者", "果断", "自信", "高效", "有影响力"],
-                icon: "🎯",
-                color: "#c026d3"
-            },
-            "ENTP": {
-                name: "辩论家",
-                category: "分析师",
-                slogan: "创意的火花，可能性追寻者",
-                intro: "你是一个充满活力和创意的思想家，喜欢挑战常规，探索可能性。你善于发现问题并提出创新的解决方案。",
-                traits: ["思维敏捷，善于创新", "喜欢挑战和辩论", "多才多艺，兴趣广泛", "善于激励他人", "适应能力强"],
-                career: ["适合创意和创业类工作", "律师、记者、演员、顾问", "喜欢解决问题的过程", "需要自由和变化的环境"],
-                relationships: ["善于社交，有魅力", "喜欢智识上的刺激", "需要保持新鲜感", "欣赏能够一起探索的伴侣"],
-                tags: ["创新者", "多才多艺", "善于交际", "思维敏捷", "喜欢挑战"],
-                icon: "💡",
-                color: "#ea580c"
-            },
-            "INFJ": {
-                name: "提倡者",
-                category: "外交官",
-                slogan: "理想主义的灯塔，温暖的光芒",
-                intro: "你是一个理想主义者，拥有深刻的同理心和强烈的价值观。你致力于帮助他人，同时追求人生的意义和价值。",
-                traits: ["理想主义，追求意义", "极具同理心和洞察力", "有原则，有价值观", "善于倾听和理解他人", "有感染力的理想主义者"],
-                career: ["适合帮助他人实现价值的工作", "心理咨询师、社会工作者", "作家、艺术家、教师", "需要能够体现价值观的环境"],
-                relationships: ["重视深度连接和质量", "善于理解他人需求", "有时过度在意他人看法", "寻找能够理解自己的伴侣"],
-                tags: ["理想主义者", "同理心强", "有原则", "善于倾听", "富有洞察力"],
-                icon: "🕯️",
-                color: "#16a34a"
-            },
-            "INFP": {
-                name: "调停者",
-                category: "外交官",
-                slogan: "浪漫的理想主义者，灵魂的诗人",
-                intro: "你是一个浪漫的理想主义者，拥有丰富的内心世界和对美的追求。你善良、真诚，致力于寻找人生的意义和价值。",
-                traits: ["理想主义，相信善良", "富有想象力和创造力", "真诚，忠于自我", "善于理解他人", "有强烈的个人价值观"],
-                career: ["适合创作和帮助他人的工作", "作家、设计师、心理咨询师", "社会工作者、图书馆员", "需要自由和意义的环境"],
-                relationships: ["重视灵魂契合", "需要空间保持自我", "表达含蓄但内心炽热", "寻找能够共同成长的伴侣"],
-                tags: ["梦想家", "富有想象力", "善良", "真诚", "有创造力"],
-                icon: "🎨",
-                color: "#0d9488"
-            },
-            "ENFJ": {
-                name: "主人公",
-                category: "外交官",
-                slogan: "魅力的激励者，团队的灯塔",
-                intro: "你是一个充满魅力的领导者，天生具有激励他人的能力。你热情、有感染力，致力于帮助他人成为最好的自己。",
-                traits: ["天生的领导者和激励者", "富有同理心和感染力", "热情、乐观、有魅力", "善于沟通和协调", "追求双赢和和谐"],
-                career: ["适合领导和培养他人的工作", "教师、教练、企业家、HR", "适合需要人际互动的环境", "喜欢看到他人成长和成功"],
-                relationships: ["重视关系，付出型人格", "善于调和矛盾", "有时过于在意他人看法", "寻找能够支持的伴侣"],
-                tags: ["激励者", "有魅力", "富有同理心", "善于沟通", "理想主义者"],
-                icon: "⭐",
-                color: "#dc2626"
-            },
-            "ENFP": {
-                name: "竞选者",
-                category: "外交官",
-                slogan: "热情的探险家，无限的可能",
-                intro: "你是一个充满热情和创意的探险家，拥有无限的可能性。你自由、热情，总是在寻找新的体验和可能性。",
-                traits: ["热情、有感染力", "充满创意和可能性", "适应力强，灵活", "善于激励他人", "对世界充满好奇"],
-                career: ["适合创意和启发他人的工作", "记者、演员、设计师、营销", "适合充满变化的环境", "需要自由和创造的空间"],
-                relationships: ["热情浪漫，重视新鲜感", "善于社交，有吸引力", "需要保持一定的自由", "寻找能够一起冒险的伴侣"],
-                tags: ["探险家", "热情", "有创意", "善于社交", "自由灵魂"],
-                icon: "🎪",
-                color: "#ca8a04"
-            },
-            "ISTJ": {
-                name: "物流师",
-                category: "守护者",
-                slogan: "责任的守护者，稳定的基石",
-                intro: "你是一个可靠、务实的实践者，重视责任和承诺。你勤奋、细心，通过坚持不懈的努力来达成目标。",
-                traits: ["可靠、值得信赖", "务实、注重实际", "有责任心", "注重细节和秩序", "勤奋努力"],
-                career: ["适合需要责任感和稳定性的工作", "会计、审计、医生、法官", "适合按部就班的环境", "喜欢可预测的结果"],
-                relationships: ["忠诚、专一", "表达含蓄但行动证明", "重视传统和责任", "寻找稳定可靠的关系"],
-                tags: ["可靠", "务实", "有责任心", "注重细节", "传统"],
-                icon: "🛡️",
-                color: "#1e40af"
-            },
-            "ISFJ": {
-                name: "守卫者",
-                category: "守护者",
-                slogan: "温暖的守护者，无声的关怀",
-                intro: "你是一个温暖、体贴的守护者，默默关心着身边的人。你善良、勤奋，致力于维护传统和和谐。",
-                traits: ["温暖、体贴、关怀他人", "有责任心和奉献精神", "注重细节和实际", "谦虚、不愿出风头", "善于记忆细节"],
-                career: ["适合需要关怀和稳定性的工作", "护士、教师、行政管理", "喜欢支持和帮助他人", "需要被认可和欣赏的环境"],
-                relationships: ["倾注型人格，付出很多", "需要时间建立信任", "重视家庭和传统", "寻找能够欣赏自己的伴侣"],
-                tags: ["守护者", "体贴", "有责任心", "忠诚", "谦逊"],
-                icon: "🌸",
-                color: "#7c3aed"
-            },
-            "ESTJ": {
-                name: "总经理",
-                category: "守护者",
-                slogan: "果断的组织者，效率的追求者",
-                intro: "你是一个果断、有组织的领导者，注重效率和成果。你重视传统、规则和秩序，是天生的管理者。",
-                traits: ["有组织和领导能力", "注重效率和成果", "直接、坦率", "重视传统和规则", "有责任心"],
-                career: ["适合管理和组织工作", "企业高管、军官、法官", "适合需要做决策的环境", "喜欢控制和秩序"],
-                relationships: ["直接、坦率有时显得强势", "重视责任和承诺", "传统、重视家庭", "欣赏能够独立但支持的伴侣"],
-                tags: ["组织者", "果断", "注重效率", "传统", "有责任感"],
-                icon: "📊",
-                color: "#b45309"
-            },
-            "ESFJ": {
-                name: "执政官",
-                category: "守护者",
-                slogan: "热情的照顾者，社交的明星",
-                intro: "你是一个热情、体贴的社交达人，致力于创造和谐的人际关系。你善于照顾他人，是受欢迎的朋友和伙伴。",
-                traits: ["热情、友好、善于社交", "体贴、关心他人需求", "有责任心", "注重传统和规则", "受欢迎，有影响力"],
-                career: ["适合服务和关怀他人的工作", "护士、教师、销售、HR", "喜欢需要人际互动的环境", "需要被喜欢和认可"],
-                relationships: ["付出型人格，照顾他人", "需要维护和谐关系", "重视承诺和责任", "寻找能够欣赏自己的伴侣"],
-                tags: ["社交达人", "热情", "体贴", "有责任感", "受欢迎"],
-                icon: "🎉",
-                color: "#be185d"
-            },
-            "ISTP": {
-                name: "鉴赏家",
-                category: "探险家",
-                slogan: "务实的工匠，行动的思考者",
-                intro: "你是一个务实的行动者，擅长分析和解决实际问题。你独立、灵活，对机械和动手操作有天赋。",
-                traits: ["务实、动手能力强", "善于分析问题", "冷静、理性", "适应力强", "喜欢探索和实验"],
-                career: ["适合需要动手能力的工作", "工程师、飞行员、厨师", "适合需要解决问题的环境", "喜欢自由和独立"],
-                relationships: ["独立、空间需求高", "不善表达但行动关心", "需要理解他们的空间", "欣赏能够一起动手的伴侣"],
-                tags: ["工匠", "务实", "独立", "冷静", "动手能力强"],
-                icon: "🔧",
-                color: "#475569"
-            },
-            "ISFP": {
-                name: "探险家",
-                category: "探险家",
-                slogan: "自由的艺术家，美的发现者",
-                intro: "你是一个自由、敏感的艺术家，追求美和真实的体验。你温柔、有耐心，善于发现生活中的美好。",
-                traits: ["艺术感、审美能力", "敏感、细腻", "灵活、适应力强", "专注当下", "善良、真诚"],
-                career: ["适合创作和艺术类工作", "设计师、摄影师、艺术家", "喜欢自由和灵活的环境", "需要表达美的渠道"],
-                relationships: ["温柔、体贴", "需要空间和自由", "不善表达但内心丰富", "寻找能够欣赏美的伴侣"],
-                tags: ["艺术家", "敏感", "自由", "善良", "审美能力强"],
-                icon: "🎭",
-                color: "#0f766e"
-            },
-            "ESTP": {
-                name: "企业家",
-                category: "探险家",
-                slogan: "大胆的行动者，机会的捕手",
-                intro: "你是一个充满活力和冒险精神的行动者。你果断、实际，善于把握机会和应对挑战。",
-                traits: ["充满活力、冒险精神", "务实、注重结果", "善于社交、有魅力", "适应力强", "善于把握机会"],
-                career: ["适合需要冒险和行动的工作", "企业家、销售、运动员", "适合快节奏的环境", "喜欢挑战和刺激"],
-                relationships: ["有趣、充满活力", "善于社交", "需要新鲜感和刺激", "欣赏能够一起冒险的伴侣"],
-                tags: ["冒险家", "务实", "有魅力", "充满活力", "善于社交"],
-                icon: "🚀",
-                color: "#ea580c"
-            },
-            "ESFP": {
-                name: "表演者",
-                category: "探险家",
-                slogan: "舞台的明星，快乐的使者",
-                intro: "你是一个热情、奔放的社交明星，热爱生活和分享快乐。你 spontaneous、有感染力，总是舞台的中心。",
-                traits: ["热情、有感染力", "善于社交、受欢迎", "自发、有趣", "活在当下", "热爱生活"],
-                career: ["适合需要表现和互动的工作", "演员、主持人、销售", "适合需要社交的环境", "喜欢成为焦点"],
-                relationships: ["热情浪漫，魅力四射", "善于社交的需要关注", "需要新鲜感", "寻找能够欣赏自己的伴侣"],
-                tags: ["表演者", "热情", "有感染力", "善于社交", "活在当下"],
-                icon: "🎤",
-                color: "#db2777"
-            }
+            'INTJ': { name: '建筑师', slogan: '战略思维者，理性的梦想家', emoji: '🏛️', traits: ['战略家', '独立思考', '完美主义', '理性', '高标准'], 
+                strengths: ['逻辑思维强', '战略眼光', '独立自主', '追求卓越', '善于规划'],
+                career: ['战略咨询', '金融分析', '科学研究', '技术管理', '律师'],
+                relationships: ['重视深度交流', '择友谨慎', '需要独立空间', '忠诚度高', '表达含蓄'],
+                growth: ['学会倾听', '接纳不完美', '多表达情感', '注意方式方法'] },
+            'INTP': { name: '逻辑学家', slogan: '创新思想家，知识的探索者', emoji: '🔭', traits: ['思想家', '好奇心', '逻辑性强', '创新', '内敛'],
+                strengths: ['分析能力', '创新能力', '客观理性', '学习能力强', '独立思考'],
+                career: ['科研人员', '数据分析师', '哲学家', '软件工程师', '大学教授'],
+                relationships: ['思想交流', '尊重隐私', '不善表达', '深层连接', '需要理解'],
+                growth: ['关注现实', '表达情感', ' deadlines意识', '社交技能'] },
+            'ENTJ': { name: '指挥官', slogan: '领导者，决策者', emoji: '⚡', traits: ['领导力', '自信', '果断', '战略', '高效'],
+                strengths: ['领导能力', '决策力', '自信', '战略思维', '执行力强'],
+                career: ['CEO', '企业家', '律师', '管理顾问', '政治家'],
+                relationships: ['直接坦率', '目标导向', '重视成长', '强势但关心', '追求共赢'],
+                growth: ['耐心', '同理心', '接受批评', '放松要求'] },
+            'ENTP': { name: '辩论家', slogan: '聪明的挑战者，创新的源泉', emoji: '💡', traits: ['机智', '好奇', '创新', '善辩', '社交'],
+                strengths: ['创意思维', '应变能力', '沟通力', '分析力', '乐观'],
+                career: ['创业者', '律师', '咨询师', '投资人', '公关专家'],
+                relationships: ['思维碰撞', '有趣', '需要空间', '善于社交', '保持新鲜'],
+                growth: ['专注力', '同理心', ' follow through', '情感表达'] },
+            'INFJ': { name: '提倡者', slogan: '理想主义者，人道的守护者', emoji: '🌿', traits: ['理想主义', '洞察力', '忠诚', '创造性', '利他'],
+                strengths: ['共情能力', '创意', '洞察力', '理想主义', '坚定信念'],
+                career: ['心理咨询师', '作家', '社会活动家', '教师', '设计师'],
+                relationships: ['深度连接', '敏感细腻', '需要意义', '倾听者', '忠诚伙伴'],
+                growth: ['自我关爱', '设立边界', '接受冲突', '实践落地'] },
+            'INFP': { name: '调停者', slogan: '诗意的梦想家，理想的追求者', emoji: '🎨', traits: ['理想主义', '善良', '创意', '敏感', '忠诚'],
+                strengths: ['共情能力', '创造力', '适应力', '价值观坚定', '洞察力'],
+                career: ['作家', '艺术家', '心理咨询师', 'HR', '非营利组织'],
+                relationships: ['浪漫', '理解', '需要空间', '敏感', '理想化'],
+                growth: ['行动力', '现实感', '自我肯定', '边界意识'] },
+            'ENFJ': { name: '主人公', slogan: '魅力的领导者，热情的启发者', emoji: '🌟', traits: ['领导力', '魅力', '理想主义', '沟通', '热情'],
+                strengths: ['领导力', '感染力', '洞察力', '责任感', '沟通力'],
+                career: ['管理培训', '教师', '政治家', '律师', '心理咨询师'],
+                relationships: ['关怀', '激励', '责任感', '社交达人', '倾听者'],
+                growth: ['自我照顾', '接受不完美', '处理冲突', '不过度付出'] },
+            'ENFP': { name: '竞选者', slogan: '热情的创新者，自由的灵魂', emoji: '✨', traits: ['热情', '创意', '自由', '洞察', '乐观'],
+                strengths: ['创造力', '热情', '洞察力', '适应力', '感染力'],
+                career: ['市场营销', '设计师', '咨询师', '记者', '创业者'],
+                relationships: ['热情浪漫', '充满惊喜', '需要空间', '善于沟通', '鼓励成长'],
+                growth: ['专注力', '执行力', '面对冲突', '落地计划'] },
+            'ISTJ': { name: '物流师', slogan: '责任担当者，秩序的守护者', emoji: '📐', traits: ['负责', '务实', '可靠', '传统', '细心'],
+                strengths: ['责任感', '可靠性', '务实', '记忆力', '组织力'],
+                career: ['会计', '律师', '医生', '军官', '管理人员'],
+                relationships: ['稳定', '可靠', '不善表达', '重视责任', '长情'],
+                growth: ['灵活性', '接受变化', '情感表达', '开放心态'] },
+            'ISFJ': { name: '守卫者', slogan: '温暖的守护者，忠诚的伙伴', emoji: '🛡️', traits: ['守护', '温暖', '忠诚', '务实', '细心'],
+                strengths: ['责任心', '忠诚', '细致', '务实', '记忆力好'],
+                career: ['护士', '教师', 'HR', '行政', '社会工作者'],
+                relationships: ['温暖关怀', '细心照顾', '默默付出', '敏感', '传统'],
+                growth: ['自我主张', '接受变化', '说"不"', '自我价值'] },
+            'ESTJ': { name: '总经理', slogan: '高效的执行者，组织的支柱', emoji: '📊', traits: ['高效', '务实', '领导力', '传统', '果断'],
+                strengths: ['执行力', '责任感', '组织力', '决策力', '务实'],
+                career: ['企业高管', '军官', '法官', '财务', '物流管理'],
+                relationships: ['直接', '可靠', '传统', '重视家庭', '强势'],
+                growth: ['灵活性', '同理心', '接受建议', '情感表达'] },
+            'ESFJ': { name: '执政官', slogan: '热情的照顾者，社会的支柱', emoji: '🎉', traits: ['热情', '社交', '责任感', '传统', '关爱'],
+                strengths: ['社交能力', '责任心', '关怀', '组织力', '乐观'],
+                career: ['教师', '护士', 'HR', '销售', '客服'],
+                relationships: ['热情', '照顾人', '社交达人', '传统', '乐于助人'],
+                growth: ['接受批评', '自我照顾', '设立边界', '独立决策'] },
+            'ISTP': { name: '鉴赏家', slogan: '实用的工匠，自由的行动者', emoji: '🔧', traits: ['理性', '实用', '冷静', '灵活', '好奇'],
+                strengths: ['动手能力', '分析力', '冷静', '适应力', '独立'],
+                career: ['工程师', '飞行员', '厨师', '运动员', '技术专家'],
+                relationships: ['独立', '空间需求', '行动表达', '少言', '实际'],
+                growth: ['情感表达', '长期规划', '人际承诺', '耐心'] },
+            'ISFP': { name: '探险家', slogan: '自由的艺术家，生活的欣赏者', emoji: '🎭', traits: ['艺术', '自由', '敏感', '善良', '务实'],
+                strengths: ['艺术天赋', '观察力', '适应力', '温柔', '务实'],
+                career: ['艺术家', '设计师', '摄影师', '厨师', '音乐家'],
+                relationships: ['浪漫', '当下', '空间', '敏感', '支持'],
+                growth: ['长期规划', '自我表达', '承诺', '面对冲突'] },
+            'ESTP': { name: '企业家', slogan: '活跃的经营者，行动的巨人', emoji: '🚀', traits: ['活力', '务实', '社交', '冒险', '适应'],
+                strengths: ['行动力', '适应力', '社交力', '务实', '谈判力'],
+                career: ['企业家', '销售', '经纪人', '运动员', '应急反应'],
+                relationships: ['活在当下', '有趣', '直接', '慷慨', '冲动'],
+                growth: ['长期思考', '专注力', '承诺', '倾听'] },
+            'ESFP': { name: '表演者', slogan: '热情的明星，生活的舞者', emoji: '🎪', traits: ['热情', '表演', '社交', '创意', '乐观'],
+                strengths: ['表现力', '社交力', '创意', '乐观', '适应力'],
+                career: ['演员', '设计师', '营销', '摄影', '旅游'],
+                relationships: ['热情', '魅力', '享受当下', '支持', '社交'],
+                growth: ['规划未来', '面对批评', '专注', '深度连接'] }
         };
 
-        // Dimension info
-        const dimensionInfo = {
-            EI: { name: "内外向", left: "内向", right: "外向", color: "#f59e0b", icon: "🧠" },
-            SN: { name: "感觉直觉", left: "感觉", right: "直觉", color: "#10b981", icon: "👁️" },
-            TF: { name: "思考情感", left: "思考", right: "情感", color: "#3b82f6", icon: "❤️" },
-            JP: { name: "判断知觉", left: "判断", right: "知觉", color: "#8b5cf6", icon: "📋" }
-        };
-
-        // State
+        // ============ STATE ============
         let currentQuestion = 0;
         let scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
-        let answeredQuestions = [];
+        let selectedOption = null;
+        let answers = [];
+        let nextTimer = null;
+        const VERIFY_CODE_URL = '';
+        const RESULT_URL = '';
+        const DEMO_CODES = [];
+        const QUIZ_ID = 'mbti';
+        const DEFAULT_CHANNEL = 'xhs';
+        const ACCESS_SESSION_KEY = 'mbti_access_session_v2';
+        const LOCAL_PREVIEW_BYPASS = false;
+        const CODE_PATTERN = /^MBTI-[A-F0-9]{12}$/i;
+        let accessToken = null;
+        let isGeneratingImage = false;
 
-        // Functions
-        function showScreen(screenId) {
+        // ============ FUNCTIONS ============
+        function setActiveScreen(screenId) {
             document.querySelectorAll('.screen').forEach(screen => {
                 screen.classList.remove('active');
             });
-            document.getElementById(screenId).classList.add('active');
+            const target = document.getElementById(screenId);
+            if (target) target.classList.add('active');
+            window.scrollTo(0, 0);
         }
 
-        function startTest() {
+        function updateAccessUI() {
+            const input = document.getElementById('accessCodeInput');
+            const status = document.getElementById('accessStatus');
+            const btn = document.getElementById('verifyBtn');
+            if (!input || !status || !btn) return;
+            if (accessToken) {
+                input.value = '';
+                input.disabled = false;
+                input.placeholder = '当前会话已验证，可直接开始测评';
+                status.textContent = '当前会话验证成功，可直接开始测评';
+                btn.textContent = '开始测评';
+                btn.disabled = false;
+            } else {
+                input.disabled = false;
+                input.placeholder = '请输入测评码，如 MBTI-XXXXXXXXXXXX';
+                status.textContent = '请输入购买后获得的专属测评码';
+                btn.textContent = '验证并开始测评';
+                btn.disabled = false;
+            }
+        }
+
+        function setAccessGranted(token) {
+            accessToken = token || 'verified';
+            try {
+                sessionStorage.setItem(ACCESS_SESSION_KEY, accessToken);
+            } catch (_) {}
+            updateAccessUI();
+        }
+
+        function loadAccessToken() {
+            try {
+                const saved = sessionStorage.getItem(ACCESS_SESSION_KEY);
+                if (saved) {
+                    accessToken = saved;
+                }
+            } catch (_) {}
+            updateAccessUI();
+        }
+
+        function clearAccessSession() {
+            accessToken = null;
+            try {
+                sessionStorage.removeItem(ACCESS_SESSION_KEY);
+            } catch (_) {}
+            updateAccessUI();
+        }
+
+        async function verifyAccessCode(code, autoStart) {
+            const btn = document.getElementById('verifyBtn');
+            const status = document.getElementById('accessStatus');
+            if (btn) btn.disabled = true;
+            if (status) status.textContent = '正在验证测评码...';
+
+            if (!CODE_PATTERN.test(code)) {
+                if (status) status.textContent = '测评码格式不正确，请检查后重试';
+                if (btn) btn.disabled = false;
+                return;
+            }
+
+            if (!VERIFY_CODE_URL) {
+                if (LOCAL_PREVIEW_BYPASS || DEMO_CODES.includes(code)) {
+                    setAccessGranted(code);
+                    if (btn) btn.disabled = false;
+                    if (autoStart) startQuiz();
+                    return;
+                }
+                if (status) status.textContent = '当前未接入正式验码服务，暂不能对外售卖使用';
+                if (btn) btn.disabled = false;
+                return;
+            }
+
+            try {
+                const res = await fetch(VERIFY_CODE_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code, quiz_id: QUIZ_ID, channel: getChannel() })
+                });
+                const data = await res.json();
+                if (res.ok && data && data.valid) {
+                    setAccessGranted(data.token || code);
+                    if (window.location.search.includes('code=')) {
+                        const url = new URL(window.location.href);
+                        url.searchParams.delete('code');
+                        window.history.replaceState({}, document.title, url.pathname + url.search);
+                    }
+                    if (status) status.textContent = data.message || '验证成功，可开始测评';
+                    if (autoStart) startQuiz();
+                    return;
+                }
+                if (status) status.textContent = data && data.message ? data.message : '测评码无效、已失效或已被使用';
+            } catch (_) {
+                if (status) status.textContent = '网络异常，请稍后重试';
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        function verifyAndStart() {
+            if (accessToken) {
+                startQuiz();
+                return;
+            }
+            const input = document.getElementById('accessCodeInput');
+            const code = input ? input.value.trim() : '';
+            if (!code) {
+                alert('请输入专属测评码。');
+                return;
+            }
+            verifyAccessCode(code, true);
+        }
+
+        function getChannel() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('channel') || DEFAULT_CHANNEL;
+        }
+
+        function autoVerifyFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            if (code && !accessToken) {
+                const input = document.getElementById('accessCodeInput');
+                if (input) input.value = code;
+                verifyAccessCode(code, false);
+            }
+        }
+
+        function startQuiz() {
+            if (!accessToken) {
+                alert('请先验证专属测评码。');
+                return;
+            }
+            setActiveScreen('questionScreen');
             currentQuestion = 0;
             scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
-            answeredQuestions = [];
-            showScreen('question-screen');
+            answers = new Array(questions.length).fill(null);
+            if (nextTimer) {
+                clearTimeout(nextTimer);
+                nextTimer = null;
+            }
             renderQuestion();
+            renderProgressDots();
+        }
+
+        function renderProgressDots() {
+            const container = document.getElementById('progressDots');
+            container.innerHTML = questions.map((_, i) => {
+                let cls = 'progress-dot';
+                if (i < currentQuestion) cls += ' completed';
+                else if (i === currentQuestion) cls += ' current';
+                return `<div class="${cls}"></div>`;
+            }).join('');
         }
 
         function renderQuestion() {
             const q = questions[currentQuestion];
-            document.getElementById('current-q').textContent = currentQuestion + 1;
-            document.getElementById('total-q').textContent = questions.length;
-            document.getElementById('progress-fill').style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
-            document.getElementById('dimension-label').textContent = '维度：' + q.dimension;
-            document.getElementById('question-text').textContent = q.question;
+            document.getElementById('questionEmoji').textContent = q.emoji;
+            document.getElementById('questionNumber').textContent = `问题 ${currentQuestion + 1}/${questions.length}`;
+            document.getElementById('dimensionTag').textContent = q.dimensionName;
+            document.getElementById('questionText').textContent = q.text;
+            document.getElementById('progressBar').style.width = `${((currentQuestion) / questions.length) * 100}%`;
+            updatePrevButton();
 
-            const optionsContainer = document.getElementById('options-container');
-            optionsContainer.innerHTML = q.options.map((opt, idx) => `
-                <div class="option" onclick="selectOption('${opt.value}')">
-                    <div class="option-indicator"></div>
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = q.options.map((opt, i) => `
+                <div class="option-card" onclick="selectOption(${i}, '${opt.value}')" id="option-${i}">
+                    <span class="option-emoji">${opt.emoji}</span>
                     <span class="option-text">${opt.text}</span>
+                    <div class="option-check">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                            <path d="M20 6L9 17l-5-5"/>
+                        </svg>
+                    </div>
                 </div>
             `).join('');
+
+            const currentAnswer = answers[currentQuestion];
+            if (currentAnswer) {
+                const selectedIndex = q.options.findIndex(opt => opt.value === currentAnswer);
+                if (selectedIndex >= 0) {
+                    const selectedCard = document.getElementById(`option-${selectedIndex}`);
+                    if (selectedCard) selectedCard.classList.add('selected');
+                    selectedOption = { index: selectedIndex, value: currentAnswer };
+                }
+            } else {
+                selectedOption = null;
+            }
+
+            // Animation
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                container.style.transition = 'all 0.4s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 50);
+
         }
 
-        function selectOption(value) {
-            // Mark selected
-            const options = document.querySelectorAll('.option');
-            options.forEach((opt, idx) => {
-                opt.classList.remove('selected');
-                if (questions[currentQuestion].options[idx].value === value) {
-                    opt.classList.add('selected');
-                }
+        function selectOption(index, value) {
+            // Remove previous selection
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected');
             });
 
-            // Record answer
-            answeredQuestions.push({
-                dimension: questions[currentQuestion].dimensionKey,
-                value: value
-            });
+            // Select current
+            const card = document.getElementById(`option-${index}`);
+            card.classList.add('selected');
 
-            // Update scores
+            // Update score
+            const prevValue = answers[currentQuestion];
+            if (prevValue) {
+                scores[prevValue] = Math.max(0, scores[prevValue] - 1);
+            }
             scores[value]++;
+            answers[currentQuestion] = value;
 
-            // Next question after brief delay
-            setTimeout(() => {
-                currentQuestion++;
-                if (currentQuestion < questions.length) {
+            selectedOption = { index, value };
+
+            // Next question after delay
+            if (nextTimer) {
+                clearTimeout(nextTimer);
+            }
+            nextTimer = setTimeout(() => {
+                if (currentQuestion < questions.length - 1) {
+                    currentQuestion++;
                     renderQuestion();
+                    renderProgressDots();
                 } else {
-                    // All questions answered - show payment screen
-                    showScreen('payment-screen');
+                    showLoading();
                 }
-            }, 300);
+            }, 400);
         }
 
-        function simulatePayment() {
-            // Show loading animation
-            showScreen('loading-screen');
+        function updatePrevButton() {
+            const btn = document.getElementById('prevButton');
+            if (!btn) return;
+            if (currentQuestion === 0) {
+                btn.textContent = '返回首页';
+            } else {
+                btn.textContent = '上一题';
+            }
+        }
 
-            // Simulate processing delay
+        function goPrevQuestion() {
+            if (nextTimer) {
+                clearTimeout(nextTimer);
+                nextTimer = null;
+            }
+            if (currentQuestion === 0) {
+                setActiveScreen('startScreen');
+                return;
+            }
+            currentQuestion--;
+            renderQuestion();
+            renderProgressDots();
+        }
+
+        function showLoading() {
+            setActiveScreen('loadingScreen');
+
             setTimeout(() => {
-                generateReport();
-                showScreen('report-screen');
-            }, 2000);
+                showReport();
+            }, 2500);
         }
 
         function calculateMBTI() {
-            let type = "";
-
-            // EI dimension
-            if (scores['E'] > scores['I']) {
-                type += "E";
-            } else if (scores['I'] > scores['E']) {
-                type += "I";
-            } else {
-                type += Math.random() > 0.5 ? "E" : "I";
-            }
-
-            // SN dimension
-            if (scores['N'] > scores['S']) {
-                type += "N";
-            } else if (scores['S'] > scores['N']) {
-                type += "S";
-            } else {
-                type += Math.random() > 0.5 ? "N" : "S";
-            }
-
-            // TF dimension
-            if (scores['T'] > scores['F']) {
-                type += "T";
-            } else if (scores['F'] > scores['T']) {
-                type += "F";
-            } else {
-                type += Math.random() > 0.5 ? "T" : "F";
-            }
-
-            // JP dimension
-            if (scores['J'] > scores['P']) {
-                type += "J";
-            } else if (scores['P'] > scores['J']) {
-                type += "P";
-            } else {
-                type += Math.random() > 0.5 ? "J" : "P";
-            }
-
+            const type = 
+                (scores.E >= scores.I ? 'E' : 'I') +
+                (scores.S >= scores.N ? 'S' : 'N') +
+                (scores.T >= scores.F ? 'T' : 'F') +
+                (scores.J >= scores.P ? 'J' : 'P');
             return type;
         }
 
-        function drawRadarChart(mbtiType) {
-            const canvas = document.getElementById('radarChart');
-            const ctx = canvas.getContext('2d');
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const radius = 80;
+        function dimensionRatio(a, b) {
+            const total = scores[a] + scores[b] || 1;
+            return Math.round((scores[a] / total) * 100);
+        }
 
-            // Clear canvas
+        function dominantRatio(a, b) {
+            const total = scores[a] + scores[b] || 1;
+            const dominant = scores[a] >= scores[b] ? scores[a] : scores[b];
+            return Math.round((dominant / total) * 100);
+        }
+
+        function preferenceStrength(a, b) {
+            const diff = Math.abs(scores[a] - scores[b]);
+            if (diff >= 2) return '强';
+            if (diff === 1) return '中';
+            return '轻';
+        }
+
+        function buildPreferenceInsight(letter, label, strength, lines) {
+            const tone = strength === '强' ? '偏好明显' : strength === '中' ? '倾向清晰' : '偏好温和';
+            return `
+                <div class="insight-card">
+                    <div class="insight-title">${label}</div>
+                    <div class="insight-text">${lines.join(' ')}</div>
+                    <div class="tone-pill">${tone}</div>
+                </div>
+            `;
+        }
+
+        function buildNarrative(mbti) {
+            const isE = scores.E >= scores.I;
+            const isN = scores.N >= scores.S;
+            const isT = scores.T >= scores.F;
+            const isJ = scores.J >= scores.P;
+
+            const energy = isE
+                ? '你更容易从互动中获得能量，倾向边交流边理清想法。'
+                : '你更容易在安静中充电，偏好先整理思路再开口表达。';
+            const info = isN
+                ? '你习惯抓住趋势与可能性，关注“未来会怎样”。'
+                : '你重视事实与细节，关注“现在是什么样”。';
+            const decision = isT
+                ? '你在决策时更看重逻辑一致性和标准边界。'
+                : '你在决策时更看重关系影响和价值共鸣。';
+            const pace = isJ
+                ? '你更偏好计划与结构，完成度会带来安全感。'
+                : '你更偏好灵活与探索，临场应对让你更自在。';
+
+            return [energy, info, decision, pace];
+        }
+
+        function buildDetailText(title, keywords) {
+            if (title === '职业发展') {
+                return `关键词 ${keywords.join('、')} 往往指向你在执行力与专业度上的优势。你更适合在目标清晰、能快速看到成果的环境中发挥，既能把思路落地，也愿意承担责任推动结果。选择岗位时，关注“是否有明确的标准与成就反馈”，会让你的效率与满足感同步提升。`;
+            }
+            if (title === '人际关系') {
+                return `这些关键词说明你在人际互动中更看重真实、效率和互相尊重。你倾向用行动而非话术建立信任，表达直接但有温度，对边界也有清晰意识。相处时如果能多给自己一点表达空间，并对他人节奏保持耐心，你的关系质量会明显上升。`;
+            }
+            return `这组关键词提醒你未来的成长方向：在保持优势的同时，补齐“节奏感与长期视角”。当你在高压或高效场景中容易走得太快时，适度放慢、复盘与倾听会让你的判断更稳。把关注点从“当下结果”扩展到“过程质量”，会带来更持续的提升。`;
+        }
+
+        function drawRadarChart(canvas, scores) {
+            const dpr = window.devicePixelRatio || 1;
+            const size = 320;
+            canvas.style.width = `${size}px`;
+            canvas.style.height = `${size}px`;
+            canvas.width = size * dpr;
+            canvas.height = size * dpr;
+            const ctx = canvas.getContext('2d');
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const radius = 110;
+
+            const dimensions = [
+                { label: '外向', value: scores.E, max: 3, color: '#F59E0B' },
+                { label: '直觉', value: scores.N, max: 3, color: '#10B981' },
+                { label: '思考', value: scores.T, max: 3, color: '#3B82F6' },
+                { label: '判断', value: scores.J, max: 3, color: '#EC4899' }
+            ];
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Calculate scores (normalize to 0-1)
-            const eiScore = scores['E'] / 7;
-            const snScore = scores['N'] / 7;
-            const tfScore = scores['T'] / 7;
-            const jpScore = scores['J'] / 7;
-
-            const values = [eiScore, snScore, tfScore, jpScore];
-            const labels = ['外向', '直觉', '思考', '判断'];
-            const colors = ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
-
-            // Draw background circles
-            ctx.strokeStyle = 'rgba(99, 102, 241, 0.1)';
-            ctx.lineWidth = 1;
-            for (let i = 1; i <= 4; i++) {
+            // Draw circles
+            for (let i = 1; i <= 3; i++) {
                 ctx.beginPath();
-                ctx.arc(centerX, centerY, radius * (i / 4), 0, Math.PI * 2);
+                ctx.arc(centerX, centerY, radius * i / 3, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+                ctx.lineWidth = 1;
                 ctx.stroke();
             }
 
-            // Draw grid lines
-            for (let i = 0; i < 4; i++) {
-                const angle = (Math.PI * 2 * i) / 4 - Math.PI / 2;
+            // Draw axes
+            dimensions.forEach((dim, i) => {
+                const angle = (Math.PI * 2 * i / 4) - Math.PI / 2;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
                 ctx.beginPath();
                 ctx.moveTo(centerX, centerY);
-                ctx.lineTo(centerX + Math.cos(angle) * radius, centerY + Math.sin(angle) * radius);
+                ctx.lineTo(x, y);
+                ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+                ctx.lineWidth = 1;
                 ctx.stroke();
-            }
 
-            // Draw data polygon
+                // Labels
+                const labelX = centerX + Math.cos(angle) * (radius + 25);
+                const labelY = centerY + Math.sin(angle) * (radius + 25);
+                ctx.fillStyle = 'rgba(255,255,255,0.6)';
+                ctx.font = '12px Noto Sans SC';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(dim.label, labelX, labelY);
+            });
+
+            // Draw data
             ctx.beginPath();
-            for (let i = 0; i < 4; i++) {
-                const angle = (Math.PI * 2 * i) / 4 - Math.PI / 2;
-                const value = values[i];
-                const x = centerX + Math.cos(angle) * radius * value;
-                const y = centerY + Math.sin(angle) * radius * value;
-                if (i === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-            }
+            dimensions.forEach((dim, i) => {
+                const angle = (Math.PI * 2 * i / 4) - Math.PI / 2;
+                const valueRadius = (dim.value / dim.max) * radius;
+                const x = centerX + Math.cos(angle) * valueRadius;
+                const y = centerY + Math.sin(angle) * valueRadius;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
             ctx.closePath();
-
-            // Fill and stroke
-            const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-            gradient.addColorStop(0, 'rgba(99, 102, 241, 0.3)');
-            gradient.addColorStop(1, 'rgba(99, 102, 241, 0.1)');
-            ctx.fillStyle = gradient;
+            ctx.fillStyle = 'rgba(124, 58, 237, 0.3)';
             ctx.fill();
-
-            ctx.strokeStyle = '#6366f1';
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#7C3AED';
+            ctx.lineWidth = 2.2;
             ctx.stroke();
 
-            // Draw data points
-            for (let i = 0; i < 4; i++) {
-                const angle = (Math.PI * 2 * i) / 4 - Math.PI / 2;
-                const value = values[i];
-                const x = centerX + Math.cos(angle) * radius * value;
-                const y = centerY + Math.sin(angle) * radius * value;
-
+            // Draw points
+            dimensions.forEach((dim, i) => {
+                const angle = (Math.PI * 2 * i / 4) - Math.PI / 2;
+                const valueRadius = (dim.value / dim.max) * radius;
+                const x = centerX + Math.cos(angle) * valueRadius;
+                const y = centerY + Math.sin(angle) * valueRadius;
                 ctx.beginPath();
-                ctx.arc(x, y, 6, 0, Math.PI * 2);
-                ctx.fillStyle = colors[i];
+                ctx.arc(x, y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = dim.color;
                 ctx.fill();
-                ctx.strokeStyle = 'white';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
-
-            // Draw labels
-            ctx.font = '12px "Noto Sans SC", sans-serif';
-            ctx.fillStyle = '#64748b';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
-            for (let i = 0; i < 4; i++) {
-                const angle = (Math.PI * 2 * i) / 4 - Math.PI / 2;
-                const labelRadius = radius + 24;
-                const x = centerX + Math.cos(angle) * labelRadius;
-                const y = centerY + Math.sin(angle) * labelRadius;
-                ctx.fillStyle = colors[i];
-                ctx.fillText(labels[i], x, y);
-            }
+            });
         }
 
-        function generateReport() {
-            const mbtiType = calculateMBTI();
-            const typeData = personalityTypes[mbtiType];
+        function showReport() {
+            setActiveScreen('reportScreen');
 
-            // Update hero section
-            document.getElementById('report-type').textContent = mbtiType;
-            document.getElementById('report-name').textContent = typeData.name;
-            document.getElementById('report-slogan').textContent = '"' + typeData.slogan + '"';
+            const mbti = calculateMBTI();
+            const data = personalityTypes[mbti];
 
-            // Dimension tags
-            const dimE = scores['E'] >= scores['I'] ? 'E' : 'I';
-            const dimS = scores['S'] >= scores['N'] ? 'S' : 'N';
-            const dimT = scores['T'] >= scores['F'] ? 'T' : 'F';
-            const dimJ = scores['J'] >= scores['P'] ? 'J' : 'P';
+            // MBTI Letters
+            document.getElementById('mbtiLetters').innerHTML = mbti.split('').map(l => 
+                `<div class="mbti-letter">${l}</div>`
+            ).join('');
 
-            const dimTagsHTML = `
-                <div class="dimension-tag ei">${dimE === 'E' ? '外向' : '内向'}</div>
-                <div class="dimension-tag sn">${dimS === 'N' ? '直觉' : '感觉'}</div>
-                <div class="dimension-tag tf">${dimT === 'T' ? '思考' : '情感'}</div>
-                <div class="dimension-tag jp">${dimJ === 'J' ? '判断' : '知觉'}</div>
+            document.getElementById('mbtiName').textContent = data.name;
+            document.getElementById('mbtiSlogan').textContent = `"${data.slogan}"`;
+
+            // Dimension Tags
+            const dimLabels = [
+                { key: 'E', label: '外向', vs: '内向' },
+                { key: 'N', label: '直觉', vs: '感觉' },
+                { key: 'T', label: '思考', vs: '情感' },
+                { key: 'J', label: '判断', vs: '知觉' }
+            ];
+            document.getElementById('dimensionTags').innerHTML = dimLabels.map((d, i) => {
+                const val = scores[d.key];
+                return `<span class="dim-tag">${val > 1.5 ? d.label : d.vs}</span>`;
+            }).join('');
+
+            // Personality Tags
+            document.getElementById('personalityTags').innerHTML = data.traits.map(t => 
+                `<span class="personality-tag"># ${t}</span>`
+            ).join('');
+
+            // Report Content
+            const narrative = buildNarrative(mbti);
+            const ei = scores.E >= scores.I ? '外向' : '内向';
+            const sn = scores.S >= scores.N ? '感觉' : '直觉';
+            const tf = scores.T >= scores.F ? '思考' : '情感';
+            const jp = scores.J >= scores.P ? '判断' : '知觉';
+            const eiRatio = dominantRatio('E', 'I');
+            const snRatio = dominantRatio('S', 'N');
+            const tfRatio = dominantRatio('T', 'F');
+            const jpRatio = dominantRatio('J', 'P');
+
+            document.getElementById('reportContent').innerHTML = `
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon lightbulb">💡</div>
+                        <h3 class="section-title">画像速写</h3>
+                    </div>
+                    <div class="section-content">
+                        <p>你是${data.name}人格类型。${data.traits.slice(0, 2).join('、')}是你最显著的第一印象，而你也会在行动中逐渐展现${data.traits.slice(2, 4).join('、')}的气质。</p>
+                        <div class="narrative-list">
+                            ${narrative.map((line, i) => `<div class="narrative-item"><span>0${i + 1}</span>${line}</div>`).join('')}
+                        </div>
+                    </div>
+                </div>
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon briefcase">🧭</div>
+                        <h3 class="section-title">偏好结构</h3>
+                    </div>
+                    <div class="section-content">
+                        <div class="insight-grid">
+                            ${buildPreferenceInsight(ei, `${ei} ${eiRatio}%`, preferenceStrength('E','I'), [
+                                ei === '外向' ? '擅长把能量带入团队，现场推动事情发生。' : '擅长深度思考，适合做高质量的判断与总结。',
+                                ei === '外向' ? '容易在交流中找到灵感。' : '更容易在独处时形成体系化观点。'
+                            ])}
+                            ${buildPreferenceInsight(sn, `${sn} ${snRatio}%`, preferenceStrength('S','N'), [
+                                sn === '感觉' ? '倾向从事实和经验出发，讲求可落地。' : '倾向从趋势和可能性出发，强调方向感。',
+                                sn === '感觉' ? '注重细节与执行质量。' : '注重模式与创新跃迁。'
+                            ])}
+                            ${buildPreferenceInsight(tf, `${tf} ${tfRatio}%`, preferenceStrength('T','F'), [
+                                tf === '思考' ? '会优先考虑规则与效率。' : '会优先考虑关系与感受。',
+                                tf === '思考' ? '擅长冷静拆解问题。' : '擅长共情与激励。'
+                            ])}
+                            ${buildPreferenceInsight(jp, `${jp} ${jpRatio}%`, preferenceStrength('J','P'), [
+                                jp === '判断' ? '更喜欢有计划、明确的推进节奏。' : '更喜欢保持弹性、在变化中优化。',
+                                jp === '判断' ? '容易在截止期前形成冲刺。' : '容易在过程中不断修正方向。'
+                            ])}
+                        </div>
+                    </div>
+                </div>
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon briefcase">💼</div>
+                        <h3 class="section-title">职业发展</h3>
+                    </div>
+                    <div class="section-content">
+                        <ul>${data.career.map(c => `<li>${c}</li>`).join('')}</ul>
+                        <p>${buildDetailText('职业发展', data.career)}</p>
+                    </div>
+                </div>
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon heart">💕</div>
+                        <h3 class="section-title">人际关系</h3>
+                    </div>
+                    <div class="section-content">
+                        <ul>${data.relationships.map(r => `<li>${r}</li>`).join('')}</ul>
+                        <p>${buildDetailText('人际关系', data.relationships)}</p>
+                    </div>
+                </div>
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon rocket">🚀</div>
+                        <h3 class="section-title">成长建议</h3>
+                    </div>
+                    <div class="section-content">
+                        <ul>${data.growth.map(g => `<li>${g}</li>`).join('')}</ul>
+                        <p>${buildDetailText('成长建议', data.growth)}</p>
+                    </div>
+                </div>
+                <div class="section-card">
+                    <div class="section-header">
+                        <div class="section-icon rocket">🧩</div>
+                        <h3 class="section-title">质性补充</h3>
+                    </div>
+                    <div class="section-content">
+                        <p>当你状态很好时，你会把${data.traits.slice(0, 3).join('、')}结合起来，形成高效的行动闭环；当压力升高时，可能会过度放大“${data.growth[0]}”这类短板。</p>
+                        <p>建议给自己设置一个微型练习：在重要决策前，先用 2 分钟写下“我忽略了什么”，再继续推进，这会让你的优势更稳、更有持续性。</p>
+                    </div>
+                </div>
             `;
-            document.getElementById('dimension-tags').innerHTML = dimTagsHTML;
 
-            // Personality icon
-            document.getElementById('personality-icon').textContent = typeData.icon;
-
-            // Draw radar chart
+            // Draw radar
             setTimeout(() => {
-                drawRadarChart(mbtiType);
+                const canvas = document.getElementById('radarCanvas');
+                drawRadarChart(canvas, scores);
             }, 100);
 
-            // Score labels
-            const scoreLabelsHTML = `
-                <div class="score-label">
-                    <div class="dot" style="background: #f59e0b"></div>
-                    <span class="label-text">外向 / 内向</span>
-                    <span class="label-value">${scores['E'] > scores['I'] ? scores['E'] + ' : ' + scores['I'] : scores['I'] + ' : ' + scores['E']}</span>
-                </div>
-                <div class="score-label">
-                    <div class="dot" style="background: #10b981"></div>
-                    <span class="label-text">直觉 / 感觉</span>
-                    <span class="label-value">${scores['N'] > scores['S'] ? scores['N'] + ' : ' + scores['S'] : scores['S'] + ' : ' + scores['N']}</span>
-                </div>
-                <div class="score-label">
-                    <div class="dot" style="background: #3b82f6"></div>
-                    <span class="label-text">思考 / 情感</span>
-                    <span class="label-value">${scores['T'] > scores['F'] ? scores['T'] + ' : ' + scores['F'] : scores['F'] + ' : ' + scores['T']}</span>
-                </div>
-                <div class="score-label">
-                    <div class="dot" style="background: #8b5cf6"></div>
-                    <span class="label-text">判断 / 知觉</span>
-                    <span class="label-value">${scores['J'] > scores['P'] ? scores['J'] + ' : ' + scores['P'] : scores['P'] + ' : ' + scores['J']}</span>
-                </div>
-            `;
-            document.getElementById('score-labels').innerHTML = scoreLabelsHTML;
-
-            // Personality tags
-            const tagsHTML = typeData.tags.map(tag => `<span class="personality-tag">#${tag}</span>`).join('');
-            document.getElementById('personality-tags').innerHTML = tagsHTML;
-
-            // Intro
-            document.getElementById('report-intro').textContent = typeData.intro;
-
-            // Traits
-            const traitsHTML = typeData.traits.map((trait, idx) => `
-                <li>
-                    <div class="list-bullet">${idx + 1}</div>
-                    <div class="list-text">${trait}</div>
-                </li>
-            `).join('');
-            document.getElementById('report-traits').innerHTML = traitsHTML;
-
-            // Career
-            const careerHTML = typeData.career.map(c => `
-                <li>
-                    <div class="list-bullet">✓</div>
-                    <div class="list-text">${c}</div>
-                </li>
-            `).join('');
-            document.getElementById('report-career').innerHTML = careerHTML;
-
-            // Relationships
-            const relationshipsHTML = typeData.relationships.map(r => `
-                <li>
-                    <div class="list-bullet">♥</div>
-                    <div class="list-text">${r}</div>
-                </li>
-            `).join('');
-            document.getElementById('report-relationships').innerHTML = relationshipsHTML;
-
-            // Share preview
-            document.getElementById('share-type').textContent = mbtiType;
-            document.getElementById('share-name').textContent = typeData.name;
-            document.getElementById('share-slogan').textContent = '"' + typeData.slogan + '"';
+            submitResult(mbti);
         }
 
-        function showShareModal() {
-            const modal = document.getElementById('shareModal');
-            modal.classList.add('active');
-
-            // Generate share canvas
-            setTimeout(() => {
-                generateShareImage();
-            }, 100);
-        }
-
-        function hideShareModal() {
-            const modal = document.getElementById('shareModal');
-            modal.classList.remove('active');
-        }
-
-        function generateShareImage() {
-            const canvas = document.getElementById('shareCanvas');
-            const ctx = canvas.getContext('2d');
-            const dpr = 3; // 3x resolution
-            const mbtiType = document.getElementById('report-type').textContent;
-            const typeData = personalityTypes[mbtiType];
-
-            // Clear
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Background gradient
-            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            gradient.addColorStop(0, '#6366f1');
-            gradient.addColorStop(1, '#818cf8');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Decorative circles
-            ctx.globalAlpha = 0.1;
-            ctx.beginPath();
-            ctx.arc(150, 150, 300, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(800, 1000, 250, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.globalAlpha = 1;
-
-            // Badge
-            ctx.fillStyle = 'rgba(255,255,255,0.2)';
-            ctx.beginPath();
-            ctx.roundRect(270, 120, 360, 84, 42);
-            ctx.fill();
-            ctx.fillStyle = 'white';
-            ctx.font = '36px "Noto Sans SC", sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('MBTI 性格测试', 450, 174);
-
-            // Type letter
-            ctx.fillStyle = 'white';
-            ctx.font = 'bold 216px "Noto Sans SC", sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText(mbtiType, 450, 480);
-
-            // Name
-            ctx.font = '84px "Noto Sans SC", sans-serif';
-            ctx.fillText(typeData.name, 450, 615);
-
-            // Slogan
-            ctx.font = '42px "Noto Sans SC", sans-serif';
-            ctx.globalAlpha = 0.9;
-            ctx.fillText(typeData.slogan, 450, 720);
-            ctx.globalAlpha = 1;
-
-            // Dimension tags
-            const dimE = scores['E'] >= scores['I'] ? '外向' : '内向';
-            const dimS = scores['S'] >= scores['N'] ? '直觉' : '感觉';
-            const dimT = scores['T'] >= scores['F'] ? '思考' : '情感';
-            const dimJ = scores['J'] >= scores['P'] ? '判断' : '知觉';
-
-            const tags = [dimE, dimS, dimT, dimJ];
-            const tagColors = ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
-            let tagX = 90;
-            tags.forEach((tag, i) => {
-                ctx.font = '36px "Noto Sans SC", sans-serif';
-                const tagWidth = ctx.measureText(tag).width + 72;
-                ctx.fillStyle = tagColors[i];
-                ctx.beginPath();
-                ctx.roundRect(tagX, 825, tagWidth, 78, 39);
-                ctx.fill();
-                ctx.fillStyle = 'white';
-                ctx.textAlign = 'center';
-                ctx.fillText(tag, tagX + tagWidth / 2, 876);
-                tagX += tagWidth + 24;
-            });
-
-            // Personality tags
-            const tags2 = typeData.tags.slice(0, 3);
-            let tag2X = 90;
-            tags2.forEach((tag) => {
-                ctx.font = '33px "Noto Sans SC", sans-serif';
-                const tagWidth = ctx.measureText('#' + tag).width + 60;
-                ctx.fillStyle = 'rgba(255,255,255,0.2)';
-                ctx.beginPath();
-                ctx.roundRect(tag2X, 960, tagWidth, 72, 36);
-                ctx.fill();
-                ctx.fillStyle = 'white';
-                ctx.fillText('#' + tag, tag2X + tagWidth / 2, 1005);
-                tag2X += tagWidth + 24;
-            });
-
-            // Footer
-            ctx.fillStyle = 'rgba(255,255,255,0.6)';
-            ctx.font = '33px "Noto Sans SC", sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('长按保存图片 · 分享到社交媒体', 450, 1140);
-        }
-
-        function shareReport() {
-            const type = document.getElementById('report-type').textContent;
-            const name = document.getElementById('report-name').textContent;
-
-            if (navigator.share) {
-                navigator.share({
-                    title: '我的MBTI性格测试结果',
-                    text: `我的MBTI是${type}（${name}）！快来测测你的吧！`,
-                    url: window.location.href
+        async function submitResult(mbti) {
+            if (!RESULT_URL || !accessToken) return;
+            const key = `result_sent_${accessToken}`;
+            if (sessionStorage.getItem(key)) return;
+            try {
+                await fetch(RESULT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        code: accessToken,
+                        quiz_id: QUIZ_ID,
+                        mbti,
+                        scores,
+                        source: 'pages'
+                    })
                 });
-            } else {
-                showShareModal();
+                sessionStorage.setItem(key, '1');
+            } catch (_) {}
+        }
+
+        function shareToWechat() {
+            shareReportImage();
+        }
+
+        async function captureReportImage() {
+            if (typeof html2canvas === 'undefined') {
+                alert('图片生成组件未加载，请稍后重试。');
+                return null;
             }
+            const report = document.getElementById('reportScreen');
+            report.scrollIntoView({ block: 'start' });
+            document.body.classList.add('is-capturing');
+            try {
+                const canvas = await html2canvas(report, {
+                    scale: 2,
+                    backgroundColor: getComputedStyle(document.body).backgroundColor,
+                    useCORS: true,
+                    windowWidth: document.documentElement.scrollWidth,
+                    windowHeight: report.scrollHeight
+                });
+                return await new Promise((resolve) => {
+                    canvas.toBlob((blob) => resolve(blob), 'image/png', 1);
+                });
+            } catch (_) {
+                return null;
+            } finally {
+                document.body.classList.remove('is-capturing');
+            }
+        }
+
+        function downloadImage(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        async function shareReportImage() {
+            if (isGeneratingImage) return;
+            isGeneratingImage = true;
+            alert('正在生成高清报告图，通常需要 3 到 8 秒。');
+            const blob = await captureReportImage();
+            if (!blob) {
+                isGeneratingImage = false;
+                alert('生成失败，请重试一次，或直接截图保存。');
+                return;
+            }
+            downloadImage(blob, 'mbti-report.png');
+            isGeneratingImage = false;
+            alert('长图已生成并下载，请到微信中选择图片发送。');
+        }
+
+        async function saveReportImage() {
+            if (isGeneratingImage) return;
+            isGeneratingImage = true;
+            alert('正在生成高清报告图，通常需要 3 到 8 秒。');
+            const blob = await captureReportImage();
+            if (!blob) {
+                isGeneratingImage = false;
+                alert('生成失败，请重试一次，或直接截图保存。');
+                return;
+            }
+            downloadImage(blob, 'mbti-report.png');
+            isGeneratingImage = false;
+            alert('已保存到本地相册或下载目录。');
         }
 
         function retest() {
-            startTest();
+            if (nextTimer) {
+                clearTimeout(nextTimer);
+                nextTimer = null;
+            }
+            currentQuestion = 0;
+            scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+            answers = new Array(questions.length).fill(null);
+            selectedOption = null;
+            isGeneratingImage = false;
+            setActiveScreen('questionScreen');
+            renderQuestion();
+            renderProgressDots();
         }
 
-        // Close modal on outside click
-        document.getElementById('shareModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                hideShareModal();
+        // 初始化验证状态
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                loadAccessToken();
+                autoVerifyFromUrl();
+                const input = document.getElementById('accessCodeInput');
+                if (input) {
+                    input.addEventListener('keydown', (event) => {
+                        if (event.key === 'Enter') {
+                            verifyAndStart();
+                        }
+                    });
+                }
+            });
+        } else {
+            loadAccessToken();
+            autoVerifyFromUrl();
+            const input = document.getElementById('accessCodeInput');
+            if (input) {
+                input.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        verifyAndStart();
+                    }
+                });
             }
-        });
+        }
     </script>
 </body>
 </html>
