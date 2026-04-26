@@ -1984,7 +1984,7 @@
             const key = `result_sent_${accessToken}`;
             if (sessionStorage.getItem(key)) return;
             try {
-                await fetch(RESULT_URL, {
+                const response = await fetch(RESULT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -1996,8 +1996,17 @@
                         channel: getChannel()
                     })
                 });
+                const data = await response.json();
+                console.log('submit-result response:', data);
+                if (!response.ok || !data || !data.ok) {
+                    throw new Error(data && data.message ? data.message : '结果提交失败');
+                }
                 sessionStorage.setItem(key, '1');
-            } catch (_) {}
+                console.log('submit-result success');
+            } catch (error) {
+                console.error('submit-result failed:', error);
+                alert(`报告已生成，但结果同步失败：${error.message || error}`);
+            }
         }
 
         function shareToWechat() {
