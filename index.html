@@ -676,8 +676,8 @@
         /* ========== REPORT SCREEN ========== */
         .report-screen {
             background: linear-gradient(180deg, #0F0A1F 0%, #1a1033 100%);
-            padding-bottom: 48px;
-            min-height: 0;
+            padding-bottom: max(48px, env(safe-area-inset-bottom));
+            min-height: 100svh;
         }
 
         .report-hero {
@@ -773,6 +773,16 @@
             padding: 20px;
             max-width: 920px;
             margin: 0 auto;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+        }
+
+        @media (max-width: 640px) {
+            .report-body {
+                display: flex;
+                flex-direction: column;
+                padding: 16px;
+                gap: 16px;
+            }
         }
 
         .report-column {
@@ -800,8 +810,9 @@
         }
 
         .radar-container {
-            max-width: 320px;
+            max-width: 280px;
             margin: 0 auto;
+            padding: 10px;
         }
 
         .personality-tags {
@@ -810,6 +821,7 @@
             justify-content: center;
             gap: 8px;
             margin-top: 20px;
+            padding-bottom: 8px;
         }
 
         .personality-tag {
@@ -905,6 +917,22 @@
             }
         }
 
+        @media (max-width: 480px) {
+            .report-column .card-surface {
+                padding: 16px;
+            }
+            .report-section .section-card {
+                padding: 18px;
+            }
+            .section-content {
+                font-size: 13px;
+            }
+            .personality-tag {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
+
         .insight-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -958,8 +986,37 @@
             font-weight: 700;
         }
 
+        @media (max-width: 480px) {
+            .report-hero {
+                padding: 28px 16px 24px;
+            }
+            .mbti-letters {
+                gap: 2px;
+            }
+            .mbti-letter {
+                width: 40px;
+                height: 48px;
+                font-size: 26px;
+                border-radius: 10px;
+            }
+            .mbti-name {
+                font-size: 28px;
+            }
+            .mbti-slogan {
+                font-size: 14px;
+            }
+            .dimension-tags {
+                gap: 6px;
+            }
+            .dim-tag {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+        }
+
         .share-section {
             padding: 24px 20px;
+            padding-bottom: max(24px, env(safe-area-inset-bottom));
             text-align: center;
             animation: slideUp 0.6s ease-out 0.7s backwards;
             display: flex;
@@ -1958,9 +2015,8 @@
             return actions;
         }
 
-        function drawRadarChart(canvas, scores) {
+        function drawRadarChart(canvas, scores, size = 280) {
             const dpr = window.devicePixelRatio || 1;
-            const size = 320;
             canvas.style.width = `${size}px`;
             canvas.style.height = `${size}px`;
             canvas.width = size * dpr;
@@ -1969,7 +2025,7 @@
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             const centerX = size / 2;
             const centerY = size / 2;
-            const radius = 110;
+            const radius = Math.min(size * 0.38, 105);
 
             const dimensions = [
                 { label: '外向', value: scores.E, max: 16, color: '#F59E0B' },
@@ -2001,11 +2057,12 @@
                 ctx.lineWidth = 1;
                 ctx.stroke();
 
-                // Labels
-                const labelX = centerX + Math.cos(angle) * (radius + 25);
-                const labelY = centerY + Math.sin(angle) * (radius + 25);
-                ctx.fillStyle = 'rgba(255,255,255,0.6)';
-                ctx.font = '12px Noto Sans SC';
+                // Labels - position outside the chart
+                const labelRadius = radius + 22;
+                const labelX = centerX + Math.cos(angle) * labelRadius;
+                const labelY = centerY + Math.sin(angle) * labelRadius;
+                ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                ctx.font = `bold ${Math.max(11, size * 0.04)}px Noto Sans SC`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(dim.label, labelX, labelY);
@@ -2055,16 +2112,16 @@
             document.getElementById('mbtiName').textContent = data.name;
             document.getElementById('mbtiSlogan').textContent = `"${data.slogan}"`;
 
-            // Dimension Tags
+            // Dimension Tags - show actual dominant preference
             const dimLabels = [
-                { key: 'E', label: '外向', vs: '内向' },
-                { key: 'N', label: '直觉', vs: '感觉' },
-                { key: 'T', label: '思考', vs: '情感' },
-                { key: 'J', label: '判断', vs: '知觉' }
+                { scoreA: 'E', scoreB: 'I', label: '外向', vs: '内向' },
+                { scoreA: 'N', scoreB: 'S', label: '直觉', vs: '感觉' },
+                { scoreA: 'T', scoreB: 'F', label: '思考', vs: '情感' },
+                { scoreA: 'J', scoreB: 'P', label: '判断', vs: '知觉' }
             ];
-            document.getElementById('dimensionTags').innerHTML = dimLabels.map((d, i) => {
-                const val = scores[d.key];
-                return `<span class="dim-tag">${val > 1.5 ? d.label : d.vs}</span>`;
+            document.getElementById('dimensionTags').innerHTML = dimLabels.map(d => {
+                const dominant = scores[d.scoreA] >= scores[d.scoreB] ? d.label : d.vs;
+                return `<span class="dim-tag">${dominant}</span>`;
             }).join('');
 
             // Personality Tags
@@ -2179,10 +2236,11 @@
                 </div>
             `;
 
-            // Draw radar
+            // Radar chart - mobile-friendly size
+            const radarSize = Math.min(window.innerWidth - 48, 280);
             setTimeout(() => {
                 const canvas = document.getElementById('radarCanvas');
-                drawRadarChart(canvas, scores);
+                drawRadarChart(canvas, scores, radarSize);
             }, 100);
         }
 
